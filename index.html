@@ -51,7 +51,7 @@ button:focus-visible,dialog:focus-visible{outline:3px solid var(--act);outline-o
 .cap ::selection{background:var(--bone);color:var(--cob)}
 
 .app{position:relative;width:min(100%,430px);height:100%;max-height:932px;overflow:hidden;background:var(--bg)}
-.deck{display:flex;height:100%;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
+.deck{display:flex;height:100%;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior:none}
 .deck::-webkit-scrollbar{display:none}
 .panel{flex:0 0 100%;height:100%;scroll-snap-align:start;scroll-snap-stop:always;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
 
@@ -2695,7 +2695,17 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     if(i!==1&&!isCurView()){var nw=new Date();viewY=nw.getFullYear();viewM=nw.getMonth();mesBuilt=false;closePop(true);renderMes()}
   }
   var ticking=false;
-  deck.addEventListener('scroll',function(){closePop(true);if(ticking)return;ticking=true;requestAnimationFrame(function(){ticking=false;setPanel(Math.round(deck.scrollLeft/deck.clientWidth))})});
+  /* no elastic pull past the first or the last panel: the app never "leaves the screen" */
+  var edgeT=null;
+  deck.addEventListener('touchstart',function(e){var t=e.touches[0];edgeT=e.touches.length===1?{x:t.clientX,y:t.clientY}:null},{passive:true});
+  deck.addEventListener('touchmove',function(e){
+    if(!edgeT||e.touches.length!==1)return;
+    var t=e.touches[0],dx=t.clientX-edgeT.x,dy=t.clientY-edgeT.y;
+    if(Math.abs(dx)<4||Math.abs(dx)<Math.abs(dy))return;
+    var max=deck.scrollWidth-deck.clientWidth;
+    if(((dx>0&&deck.scrollLeft<=1)||(dx<0&&deck.scrollLeft>=max-1))&&e.cancelable)e.preventDefault();
+  },{passive:false});
+  deck.addEventListener('scroll',function(){if(deck.scrollLeft<0)deck.scrollLeft=0;closePop(true);if(ticking)return;ticking=true;requestAnimationFrame(function(){ticking=false;setPanel(Math.round(deck.scrollLeft/deck.clientWidth))})});
   $('dots').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;deck.scrollTo({left:+b.dataset.i*deck.clientWidth,behavior:window.matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'})});
   document.addEventListener('keydown',function(e){
     if(pkOpen||document.querySelector('dialog[open]')||/INPUT|TEXTAREA/.test(document.activeElement.tagName))return;
