@@ -321,6 +321,10 @@ button.mp{color:inherit}
 .m-pick{display:flex;justify-content:center;gap:8px;margin-top:8px}
 .m-pick button{min-height:44px;padding:0 16px;border-radius:22px;background:color-mix(in srgb,var(--ink) 8%,transparent);color:var(--ink);font-size:16px;font-weight:500;display:inline-flex;align-items:center;gap:6px}
 .m-pick button.unset{color:var(--ink2)}
+.m-pick.m2{margin-top:6px;flex-wrap:wrap;gap:6px}
+.m-pick.m2 button{min-height:38px;font-size:13px;padding:0 11px;gap:4px;white-space:nowrap}
+.m-pick.m2 button.on{background:color-mix(in srgb,var(--act) 18%,transparent);color:var(--act);font-weight:600}
+.m-pick.m2 svg{width:14px;height:14px}
 .m-pick button:active{background:var(--line)}
 .m-pad{display:grid;grid-template-columns:repeat(3,1fr);margin-top:6px;max-height:200px;overflow:hidden;transition:max-height .45s cubic-bezier(.16,1,.3,1),opacity .25s,margin .45s}
 .m-pad button{height:46px;border-radius:14px;font-size:26px;font-weight:400;display:grid;place-items:center}
@@ -562,6 +566,146 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
 @keyframes tkl{0%{stroke:var(--amberf);stroke-width:4}100%{stroke-width:2}}
 @keyframes tkt{0%{fill:var(--amberf);font-size:13px}100%{font-size:9px}}
 @media (prefers-reduced-motion:reduce){.wv,.bub,.sheen{animation:none!important}}
+
+/* ===== Pagos (prueba): anillo del próximo pago, cobertura del saldo y horizonte de 30 días ===== */
+.payhero{display:flex;align-items:center;gap:14px;width:100%;margin-top:16px;padding:12px 16px 12px 12px;border-radius:26px;text-align:left;background:color-mix(in srgb,var(--act) 11%,transparent);transition:transform .35s cubic-bezier(.34,1.56,.64,1),background-color .3s}
+.payhero:active{transform:scale(.98)}
+.ring{flex:none;width:76px;height:76px;position:relative}
+.ring svg{width:76px;height:76px;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:6;stroke-linecap:round}
+.rg-bg{stroke:color-mix(in srgb,var(--act) 18%,transparent)}
+.rg-fg{stroke:var(--act);stroke-dasharray:163.4;stroke-dashoffset:calc(163.4 * (1 - var(--p)));transition:stroke-dashoffset 1.1s cubic-bezier(.16,1,.3,1),stroke .4s}
+.payhero.soon .rg-fg{stroke:var(--amberf)}
+.payhero.play .rg-fg{animation:rgIn 1.2s cubic-bezier(.16,1,.3,1) both}
+@keyframes rgIn{from{stroke-dashoffset:163.4}}
+.rnum{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+.rnum b{font-size:25px;font-weight:700;letter-spacing:-0.02em}
+.rnum small{font-size:11px;font-weight:500;color:var(--ink2);margin-top:2px}
+.payhero.soon .rnum b{color:var(--amber)}
+.ph-t{min-width:0;display:flex;flex-direction:column;gap:2px}
+.ph-t small{font-size:12px;font-weight:600;color:var(--ink2);text-transform:uppercase;letter-spacing:.06em}
+.ph-t b{font-size:20px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ph-t span{font-size:15px;color:var(--ink2)}
+.cover{margin-top:16px}
+.cv-bar{position:relative;height:16px;border-radius:8px;background:color-mix(in srgb,var(--ink) 7%,transparent);display:flex;gap:2px;overflow:visible}
+.cv-bar i{display:block;height:100%;border-radius:8px;background:var(--act);transform-origin:left center;transition:width .9s cubic-bezier(.16,1,.3,1);transition-delay:calc(var(--i)*70ms)}
+.cv-bar i:nth-child(even){background:color-mix(in srgb,var(--act) 62%,transparent)}
+.cv-bar i.no{background:var(--amberf)}
+.cover.play .cv-bar i{animation:cvIn .8s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(var(--i)*70ms + 150ms)}
+@keyframes cvIn{from{transform:scaleX(0)}}
+.cv-mark{position:absolute;top:-5px;bottom:-5px;width:3px;margin-left:-1.5px;border-radius:2px;background:var(--ink);transition:left .9s cubic-bezier(.16,1,.3,1)}
+.cv-mark::after{content:"Saldo";position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:3px;font-size:11px;font-weight:600;color:var(--ink2);white-space:nowrap}
+.cv-txt{margin:20px 0 0;font-size:14px;line-height:1.4;color:var(--ink2)}
+.cv-txt b{color:var(--ink);font-weight:600}
+.cv-txt.bad b{color:var(--amber)}
+.sky{margin-top:20px}
+.sk-track{position:relative;height:92px;display:flex;align-items:flex-end;gap:2px;margin:0}
+.sk{position:relative;flex:1;min-width:0;height:100%;display:flex;align-items:flex-end;justify-content:center;padding:0}
+.sk i{display:block;width:100%;max-width:11px;height:var(--h,3px);border-radius:5px 5px 2px 2px;background:color-mix(in srgb,var(--ink) 14%,transparent);transform-origin:bottom center}
+.sk.p i{background:var(--act)}
+.sk.p.soon i{background:var(--amberf)}
+.sk.p.var i{background:transparent;box-shadow:inset 0 0 0 2px var(--act)}
+.sk.p.var.soon i{box-shadow:inset 0 0 0 2px var(--amberf)}
+.sk.today::after{content:"";position:absolute;left:50%;bottom:-9px;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:var(--ink)}
+.sk.p::before{content:"";position:absolute;inset:-2px -1px}
+.sk:active i{transform:scaleY(.94)}
+.sk.hl i{animation:skHl .8s ease-out}
+@keyframes skHl{0%{filter:brightness(1.5);transform:scaleY(1.12)}100%{filter:none;transform:none}}
+.runway.play .sk i{animation:skUp .75s cubic-bezier(.16,1,.3,1) both;animation-delay:calc(var(--n)*22ms)}
+@keyframes skUp{from{transform:scaleY(0)}}
+.sk-lbl{display:flex;justify-content:space-between;margin-top:14px;font-size:12px;color:var(--ink2)}
+@media (prefers-reduced-motion:reduce){.payhero,.rg-fg,.cv-bar i,.cv-mark{transition:none!important}.payhero.play .rg-fg,.cover.play .cv-bar i,.runway.play .sk i{animation:none!important}}
+
+/* ===== Pagos (prueba): tres maneras de ver los pagos ===== */
+.pgrp{margin:20px 2px 4px;font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink2)}
+.prow.card{border-top:0;margin-top:10px}
+.prow.card .pswipe{border-radius:22px;background:color-mix(in srgb,var(--ink) 5%,transparent)}
+.prow.card .pay{grid-template-columns:auto 1fr auto;gap:13px;padding:12px 8px 12px 12px;border-radius:22px}
+.prow.card .pback{border-radius:22px}
+.dtile{width:52px;flex:none;border-radius:15px;overflow:hidden;display:flex;flex-direction:column;align-items:stretch;text-align:center;background:var(--pbg);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--ink) 10%,transparent)}
+.dtile span{display:block;padding:2px 0 1px;font-size:10px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;background:var(--act);color:var(--on-act)}
+.dtile b{display:block;padding:3px 0 5px;font-size:22px;font-weight:700;letter-spacing:-0.02em;line-height:1.1}
+.dtile.soon span{background:var(--amberf);color:var(--on-amberf)}
+.dtile.over span{background:var(--c4);color:#fff}
+.dtile.paid{opacity:.55}
+.cmid{min-width:0;display:flex;flex-direction:column;gap:2px}
+.cmid .t{font-size:17px;font-weight:600;line-height:1.2;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.cbar{height:5px;border-radius:3px;background:color-mix(in srgb,var(--ink) 10%,transparent);margin:5px 0 2px;overflow:hidden}
+.cbar i{display:block;height:100%;border-radius:3px;background:var(--act);transform-origin:left;transition:width .9s cubic-bezier(.16,1,.3,1)}
+.pays.play .cbar i{animation:cvIn .9s cubic-bezier(.16,1,.3,1) both;animation-delay:.25s}
+.pays.play .prow.card{animation:cardIn .55s cubic-bezier(.16,1,.3,1) backwards;animation-delay:calc(var(--n)*55ms)}
+@keyframes cardIn{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+.ccal{margin-top:16px}
+.cwk{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:11px;font-weight:600;color:var(--ink2);margin-bottom:4px}
+.cgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cday{position:relative;aspect-ratio:1/1.08;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:15px;font-weight:500;transition:background-color .25s,transform .3s cubic-bezier(.34,1.56,.64,1);animation:cardIn .45s cubic-bezier(.16,1,.3,1) backwards;animation-delay:calc(var(--n)*14ms)}
+.cday small{position:absolute;top:3px;left:0;right:0;font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2)}
+.cday.past{opacity:.35}
+.cday.out{opacity:.3}
+.cday.today{box-shadow:inset 0 0 0 2px var(--ink)}
+.cday.has{background:color-mix(in srgb,var(--act) 12%,transparent);font-weight:700}
+.cday.sel{background:var(--act);color:var(--on-act);transform:scale(1.06)}
+.cday:active{transform:scale(.94)}
+.cdots{display:flex;gap:3px;height:6px}
+.cdots i{width:6px;height:6px;border-radius:50%;background:var(--act)}
+.cdots i.soon{background:var(--amber)}
+.cday.sel .cdots i{background:var(--on-act)}
+.cdots i.paid{opacity:.4}
+.csel{margin:16px 2px 0;font-size:14px;font-weight:600;color:var(--ink2)}
+@media (prefers-reduced-motion:reduce){.cday,.cbar i{transition:none!important}.pays.play .prow.card,.pays.play .cbar i,.cday{animation:none!important}}
+
+/* ===== Pagos (prueba): saldo día a día y monedas ===== */
+.lc{display:block;width:100%;height:auto;margin-top:8px;overflow:visible;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.lz{stroke:color-mix(in srgb,var(--ink) 28%,transparent);stroke-width:1;stroke-dasharray:3 4}
+.lt{fill:var(--ink2);font-size:10px;font-weight:600}
+.la.up{fill:color-mix(in srgb,var(--act) 20%,transparent)}
+.la.dn{fill:color-mix(in srgb,var(--amberf) 38%,transparent)}
+.ll{fill:none;stroke:var(--act);stroke-width:3;stroke-linejoin:round;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:0}
+.lm{fill:var(--pbg);stroke:var(--act);stroke-width:2.5}
+.lm.neg{stroke:var(--amber);fill:var(--amberf)}
+.ln{fill:var(--act)}
+.lg line{stroke:var(--ink);stroke-width:1.5;stroke-opacity:.55}
+.lg circle{fill:var(--ink);stroke:var(--pbg);stroke-width:2}
+.lg{transition:opacity .2s}
+.lh{cursor:ew-resize}
+.cover.play .ll{animation:lcDraw 1.3s cubic-bezier(.16,1,.3,1) both}
+.cover.play .la{animation:lcFade 1.2s .35s ease-out both}
+.cover.play .lm{animation:lcPop .55s cubic-bezier(.34,1.56,.64,1) both;animation-delay:calc(.5s + var(--i)*110ms);transform-box:fill-box;transform-origin:center}
+@keyframes lcDraw{from{stroke-dashoffset:1}}
+@keyframes lcFade{from{opacity:0}}
+@keyframes lcPop{from{transform:scale(0);opacity:0}}
+.cv-say{margin:12px 2px 0;min-height:40px;font-size:14px;line-height:1.4;color:var(--ink2)}
+.cv-say b{color:var(--ink);font-weight:600}
+.cv-say.bad b{color:var(--amber)}
+@media (prefers-reduced-motion:reduce){.cover.play .ll,.cover.play .la,.cover.play .lm,/* ===== Pagos (prueba): estado del saldo plegable y botón Pagar ===== */
+.cover{margin-top:14px}
+.stchip{display:flex;align-items:center;gap:10px;width:100%;min-height:58px;padding:8px 12px 8px 12px;border-radius:20px;text-align:left;background:color-mix(in srgb,var(--act) 11%,transparent);color:var(--act);transition:background-color .3s,transform .3s cubic-bezier(.34,1.56,.64,1)}
+.stchip:active{transform:scale(.985)}
+.stchip.bad{background:color-mix(in srgb,var(--amberf) 24%,transparent);color:var(--amber)}
+.stt{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.stt b{font-size:15px;font-weight:600;color:var(--ink);line-height:1.25}
+.stt small{font-size:12.5px;color:var(--ink2);line-height:1.3}
+.stchip.bad .stt small{color:var(--amber);font-weight:600}
+.spark{flex:none;width:48px;height:20px;overflow:visible}
+.spark line{stroke:currentColor;stroke-opacity:.3;stroke-dasharray:2 3}
+.spark path{fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.stc{flex:none;opacity:.7;transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+.cover.open .stc{transform:rotate(180deg)}
+.stbody{display:grid;grid-template-rows:0fr;transition:grid-template-rows .55s cubic-bezier(.16,1,.3,1)}
+.cover.open .stbody{grid-template-rows:1fr}
+.stin{min-height:0;overflow:hidden}
+.prc{align-self:center}
+.ca{display:block;font-size:17px;font-weight:700;letter-spacing:-0.01em;line-height:1.3}
+.ca .sub{display:block;font-size:14px;font-weight:500;letter-spacing:0}
+.prow.card .alarm{width:38px;height:38px}
+.prow.card .paynow{padding:0 13px;min-height:34px;font-size:14px}
+.prow.card .pay{gap:11px;padding:12px 6px 12px 12px}
+.pact{display:flex;align-items:center;gap:4px}
+.paynow{min-height:36px;padding:0 15px;border-radius:18px;background:var(--act);color:var(--on-act);font-size:14px;font-weight:700;transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.paynow:active{transform:scale(.92)}
+.prow.card .pay{grid-template-columns:auto 1fr auto}
+.cday{aspect-ratio:1/.86}
+.cwk{margin-bottom:2px}
 </style>
 </head>
 <body>
@@ -615,9 +759,11 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
       <p class="big" id="payTotal">$0</p>
       <p class="lead" id="payLead"></p>
       <p class="flow" id="payAfter" hidden></p>
-      <div class="runway" id="runway"></div>
-      <p class="hint pgh" id="payHint">Desliza un pago a la derecha para marcarlo pagado. Tócalo para editarlo o borrarlo.</p>
-      <div id="pays"></div>
+      <div id="payHero"></div>
+      <div id="payCover"></div>
+      <div class="runway sky" id="runway"></div>
+      <p class="hint pgh" id="payHint">Pulsa Pagar o desliza la tarjeta a la derecha. Tócala para editarla.</p>
+      <div class="pays" id="pays"></div>
       <button type="button" class="addpay" id="addPay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Agregar pago</button>
       <button type="button" class="payhist" id="payHist" hidden aria-haspopup="dialog">Pagos hechos</button>
     </section>
@@ -647,6 +793,11 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     <div class="m-pick">
       <button type="button" class="unset" id="a2Name" aria-haspopup="dialog"><span id="a2NameT">Nombre</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
       <button type="button" class="unset" id="a2Day" aria-haspopup="dialog"><span id="a2DayT">Día</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+    </div>
+    <div class="m-pick m2" id="a2Row2">
+      <button type="button" id="a2Every" aria-haspopup="dialog"><span id="a2EveryT">Cada mes</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <button type="button" id="a2Tot" aria-haspopup="dialog"><span id="a2TotT">Sin fin</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <button type="button" id="a2Off" aria-haspopup="dialog" hidden><span id="a2OffT">Ya van 0</span></button>
     </div>
     <div class="m-pad" id="a2Pad">
       <button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button><button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button><button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button>
@@ -1570,7 +1721,7 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
   function payIcs(p){
     var d=payDate(p),now=new Date(),u=now.toISOString().replace(/[-:]/g,'').replace(/\.\d+/,'');
     var sum=p.n+(p.v?'':' · $'+Math.round(p.a).toLocaleString('en-US'));
-    var rule=p.day<=28?'FREQ=MONTHLY;BYMONTHDAY='+p.day:'FREQ=MONTHLY;BYMONTHDAY=-1';
+    var rule=(p.day<=28?'FREQ=MONTHLY;BYMONTHDAY='+p.day:'FREQ=MONTHLY;BYMONTHDAY=-1')+';INTERVAL='+payEvery(p)+(p.total>0?';COUNT='+Math.max(1,p.total-payDone(p)):'');
     return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Alcancia//ES','CALSCALE:GREGORIAN','METHOD:PUBLISH','BEGIN:VEVENT',
       'UID:alcancia-pago-'+p.id+'-'+now.getTime()+'@alcancia','DTSTAMP:'+u,'DTSTART:'+icsStamp(d,9),'DTEND:'+icsStamp(d,10),'RRULE:'+rule,
       'SUMMARY:'+icsEsc('Pagar '+sum),
@@ -1667,56 +1818,204 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
   function today0(){var t=new Date();t.setHours(0,0,0,0);return t}
   function iso(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
   function dayIn(y,m,day){return new Date(y,m,Math.min(day,new Date(y,m+1,0).getDate()))}
-  function payDate(p){var t=today0(),d=dayIn(t.getFullYear(),t.getMonth(),p.day);if(d<t)d=dayIn(t.getFullYear(),t.getMonth()+1,p.day);return d}
+  /* schedule: every N months from an anchor month; optional number of installments (cuotas) */
+  function payEvery(p){return p.every>0?p.every:1}
+  function monthsOf(y,m){return y*12+m}
+  function occDate(p,k){
+    if(!p.from){var t0=new Date();p.from={y:t0.getFullYear(),m:t0.getMonth()}}
+    var mo=monthsOf(p.from.y,p.from.m)+k*payEvery(p);return dayIn(Math.floor(mo/12),mo%12,p.day);
+  }
+  function payDone(p){return (p.off||0)+S.moves.filter(function(m){return m.pid===p.id}).length}
+  function payFinished(p){return p.total>0&&payDone(p)>=p.total}
+  /* the occurrence you should deal with next (installments: the next unpaid one, even if overdue) */
+  function payIdx(p){
+    if(p.total>0)return payDone(p);
+    var t=today0(),k=0,mo=monthsOf(t.getFullYear(),t.getMonth());
+    if(!p.from)occDate(p,0);
+    k=Math.max(0,Math.floor((mo-monthsOf(p.from.y,p.from.m))/payEvery(p))-1);
+    while(occDate(p,k)<t&&k<2000)k++;
+    return k;
+  }
+  function payDate(p){return occDate(p,payIdx(p))}
   function payById(id){return PAYS.filter(function(x){return x.id===id})[0]}
+  function lastPaidAt(p){var t=0;S.moves.forEach(function(m){if(m.pid===p.id&&m.t>t)t=m.t});return t}
   function payList(){
     var t=today0();
-    return PAYS.map(function(p){
+    return PAYS.filter(function(p){return !payFinished(p)}).map(function(p){
       var o={};for(var k in p)o[k]=p[k];
-      var d=payDate(p),pd=S.paid[p.id];
-      if(pd&&pd.d===iso(d)&&S.moves.some(function(m){return m.id===pd.mid})){d=dayIn(d.getFullYear(),d.getMonth()+1,p.day);o.paid=true}
-      o.date=d;o.diff=Math.round((d-t)/864e5);return o;
+      var k0=payIdx(p),d=occDate(p,k0),pd=S.paid[p.id];
+      if(p.total>0){
+        if(k0>0&&occDate(p,k0-1)>=t)o.paid=true;
+      }else if(pd&&pd.d===iso(d)&&S.moves.some(function(m){return m.id===pd.mid})){d=occDate(p,k0+1);o.paid=true}
+      o.date=d;o.diff=Math.round((d-t)/864e5);o.k=k0;o.done=payDone(p);return o;
     }).sort(function(a,b){return a.date-b.date});
   }
+  function freqText(p){
+    var e=payEvery(p),f=e===1?'cada mes':e===12?'cada año':'cada '+e+' meses';
+    return f+(p.total>0?' · '+p.total+' cuotas':'');
+  }
+  function payNote(p){
+    var parts=[];
+    if(p.total>0)parts.push('Cuota '+Math.min(p.total,(p.done!=null?p.done:payDone(p))+(p.paid?0:1))+' de '+p.total);
+    if(payEvery(p)>1)parts.push(payEvery(p)===12?'cada año':'cada '+payEvery(p)+' meses');
+    if(p.v)parts.push('monto variable');
+    return parts.length?parts.join(' · '):(p.note||'Pago mensual');
+  }
+  function nxtLabel(d){return d<0?'venció hace '+(-d)+(d===-1?' día':' días'):d===0?'hoy':d===1?'mañana':'en '+d+' días'}
   function pegSize(p,maxA){return p.v?18:Math.round(12+Math.sqrt(p.a/maxA)*18)}
   function monShort(d){return d.toLocaleDateString('es',{month:'short'}).replace('.','')}
-  function payRow(p,enterId,maxA){
-    var soon=p.diff<=3&&!p.paid,when=p.diff===0?'hoy':p.diff===1?'mañana':'en '+p.diff+' días';
-    var second=p.paid?'<span class="sub paid-t">Pagado el '+new Date(S.paid[p.id].t).getDate()+' '+monShort(new Date(S.paid[p.id].t))+'</span>':'<span class="sub">'+p.note+'</span>';
-    return '<div class="prow'+(p.id===enterId?' enter':'')+'" data-id="'+p.id+'"><div class="pswipe"><div class="pback" aria-hidden="true">'+CHECKI+'<span>Pagado</span></div>'+
-      '<div class="pay pfront'+(p.paid?' paid':'')+'"><span class="rp'+(soon?' soon':'')+(p.v?' var':'')+'" style="--s:'+pegSize(p,maxA)+'px" aria-hidden="true"></span>'+
-      '<div><div class="t">'+esc(p.n)+'</div><span class="sub'+(soon?' soon-t':'')+'">'+p.date.getDate()+' '+monShort(p.date)+' · '+when+'</span>'+second+'</div>'+
-      '<div class="pr"><span>'+(p.v?'Variable':money(p.a))+'</span><button type="button" class="alarm" data-id="'+p.id+'" aria-pressed="'+(S.alarms[p.id]?'true':'false')+'" aria-label="Alarma en calendario para '+esc(p.n)+'"><span class="al-bg" aria-hidden="true"></span>'+BELL+'</button></div>'+
-      (p.paid?'':'<button type="button" class="paidbtn" data-id="'+p.id+'" aria-label="Marcar '+esc(p.n)+' como pagado">Marcar pagado</button>')+
+  /* does the balance last? two ways to see it: a balance line you can scrub, or coins in date order */
+  var cvEv=null;
+  function cvEvents(inH,bal){
+    var fixed=inH.filter(function(p){return !p.v}).slice().sort(function(a,b){return a.date-b.date}),by={},ev=[],run=bal;
+    fixed.forEach(function(p){var d=Math.max(0,Math.min(HOR,p.diff));(by[d]=by[d]||[]).push(p)});
+    Object.keys(by).map(Number).sort(function(a,b){return a-b}).forEach(function(d){
+      var ps=by[d],amt=ps.reduce(function(t,p){return t+p.a},0),before=run;run-=amt;
+      ev.push({day:d,names:ps.map(function(p){return p.n}).join(', '),amt:amt,before:before,after:run,date:ps[0].date,ps:ps});
+    });
+    return {ev:ev,bal:bal,end:run};
+  }
+  function lineHtml(m){
+    var W=340,padL=8,padR=8,top=16,plotH=96,bot=top+plotH,ev=m.ev,bal=m.bal,mn=Math.min(0,m.end,bal),mx=Math.max(bal,1),span=(mx-mn)||1;
+    var xs=function(d){return padL+d/HOR*(W-padL-padR)},ys=function(v){return top+(mx-v)/span*plotH},y0=ys(0);
+    var pts=[[xs(0),ys(bal)]],run=bal;
+    ev.forEach(function(e){pts.push([xs(e.day),ys(run)]);run=e.after;pts.push([xs(e.day),ys(run)])});
+    pts.push([xs(HOR),ys(run)]);
+    var d='M'+pts.map(function(q){return q[0].toFixed(1)+' '+q[1].toFixed(1)}).join('L'),area=d+'L'+xs(HOR).toFixed(1)+' '+y0.toFixed(1)+'L'+xs(0).toFixed(1)+' '+y0.toFixed(1)+'Z';
+    var maxA=Math.max.apply(null,ev.map(function(e){return e.amt}).concat([1])),h='<svg class="lc" id="lcSvg" viewBox="0 0 '+W+' '+(bot+34)+'" role="img" aria-label="Tu saldo día a día durante los próximos '+HOR+' días">';
+    h+='<defs><clipPath id="lcUp"><rect x="0" y="0" width="'+W+'" height="'+y0.toFixed(1)+'"/></clipPath><clipPath id="lcDn"><rect x="0" y="'+y0.toFixed(1)+'" width="'+W+'" height="'+(bot+34)+'"/></clipPath></defs>';
+    h+='<line class="lz" x1="'+padL+'" x2="'+(W-padR)+'" y1="'+y0.toFixed(1)+'" y2="'+y0.toFixed(1)+'"/><text class="lt" x="'+(W-padR)+'" y="'+(y0-5).toFixed(1)+'" text-anchor="end">$0</text>';
+    h+='<path class="la up" d="'+area+'" clip-path="url(#lcUp)"/><path class="la dn" d="'+area+'" clip-path="url(#lcDn)"/>';
+    h+='<path class="ll" d="'+d+'" pathLength="1"/>';
+    ev.forEach(function(e,i){h+='<circle class="lm'+(e.after<0?' neg':'')+'" cx="'+xs(e.day).toFixed(1)+'" cy="'+ys(e.after).toFixed(1)+'" r="'+(4+Math.sqrt(e.amt/maxA)*4).toFixed(1)+'" style="--i:'+i+'"/>'});
+    h+='<circle class="ln" cx="'+xs(0)+'" cy="'+ys(bal).toFixed(1)+'" r="5"/>';
+    h+='<g class="lg" id="lcGuide" style="opacity:0"><line x1="0" x2="0" y1="'+top+'" y2="'+bot+'"/><circle r="6" cx="0" cy="0"/></g>';
+    var end=today0();end.setDate(end.getDate()+HOR);
+    h+='<text class="lt" x="'+padL+'" y="'+(bot+22)+'">hoy</text><text class="lt" x="'+(W-padR)+'" y="'+(bot+22)+'" text-anchor="end">'+end.getDate()+' '+monShort(end)+'</text>';
+    h+='<rect class="lh" x="0" y="0" width="'+W+'" height="'+(bot+34)+'" fill="transparent"/></svg>';
+    cvEv={ev:ev,bal:bal,xs:xs,ys:ys,W:W,padL:padL,padR:padR};
+    return h;
+  }
+  function cvAt(day){
+    var m=cvEv,cur=m.bal,hit=null;
+    m.ev.forEach(function(e){if(e.day<=day){cur=e.after;if(e.day===day)hit=e}});
+    var dt=new Date(today0());dt.setDate(dt.getDate()+day);
+    var lab=dt.toLocaleDateString('es',{weekday:'short',day:'numeric',month:'short'}).replace('.','').replace(/^./,function(c){return c.toUpperCase()});
+    return {day:day,bal:cur,hit:hit,lab:lab};
+  }
+  function cvSay(x){
+    var t=$('cvSay');if(!t)return;
+    var neg=x.bal<0;t.className='cv-say'+(neg?' bad':'');
+    t.innerHTML=x.hit?'<b>'+esc(x.lab)+'</b> · pagas '+esc(x.hit.names)+' <b>−'+money(x.hit.amt)+'</b> → '+(x.bal<0?'te faltan <b>'+money(-x.bal)+'</b>':'te quedan <b>'+money(x.bal)+'</b>'):'<b>'+esc(x.lab)+'</b> · '+(x.bal<0?'te faltan <b>'+money(-x.bal)+'</b>':'tu saldo <b>'+money(x.bal)+'</b>');
+  }
+  function cvDefault(){
+    var m=cvEv,low=m.ev.filter(function(e){return e.after<0})[0]||m.ev.reduce(function(a,e){return !a||e.after<a.after?e:a},null),t=$('cvSay');if(!t)return;
+    if(!m.ev.length){t.className='cv-say';t.innerHTML='Aún no hay pagos fijos en los próximos '+HOR+' días.';return}
+    if(low.after<0){t.className='cv-say bad';t.innerHTML='Desde el <b>'+low.date.getDate()+' '+monShort(low.date)+'</b> no alcanza: te faltan <b>'+money(-low.after)+'</b> para pagar «'+esc(low.names)+'».'}
+    else{t.className='cv-say';t.innerHTML='Tu saldo alcanza para todo. Lo más bajo: <b>'+money(low.after)+'</b> el '+low.date.getDate()+' '+monShort(low.date)+'.'}
+    var g=$('lcGuide');if(g)g.style.opacity=0;
+  }
+  var stOpen=false;
+  function sparkHtml(m){
+    var W=60,H=22,ev=m.ev,mn=Math.min(0,m.end,m.bal),mx=Math.max(m.bal,1),sp=(mx-mn)||1,x=function(d){return 2+d/HOR*(W-4)},y=function(v){return 2+(mx-v)/sp*(H-4)};
+    var pts=[[x(0),y(m.bal)]],run=m.bal;ev.forEach(function(e){pts.push([x(e.day),y(run)]);run=e.after;pts.push([x(e.day),y(run)])});pts.push([x(HOR),y(run)]);
+    return '<svg class="spark" viewBox="0 0 '+W+' '+H+'" aria-hidden="true"><line x1="2" x2="'+(W-2)+'" y1="'+y(0).toFixed(1)+'" y2="'+y(0).toFixed(1)+'"/><path d="M'+pts.map(function(q){return q[0].toFixed(1)+' '+q[1].toFixed(1)}).join('L')+'"/></svg>';
+  }
+  function renderCover(inH,bal){
+    var cv=$('payCover'),fixed=inH.filter(function(p){return !p.v});
+    if(S.hide||!S.inc.length||!fixed.length){cv.innerHTML='';cvEv=null;return}
+    var m=cvEvents(inH,bal),bad=m.ev.filter(function(e){return e.after<0})[0],low=m.ev.reduce(function(a,e){return !a||e.after<a.after?e:a},null);
+    var ok='<svg class="sti" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></svg>',
+        warn='<svg class="sti" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3L2.5 20h19z"/><path d="M12 10v4.5M12 17.5h.01"/></svg>',
+        chev='<svg class="stc" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+    cv.innerHTML='<div class="cover'+(stOpen?' open':'')+'" id="coverIn"><button type="button" class="stchip'+(bad?' bad':'')+'" id="stBtn" aria-expanded="'+stOpen+'" aria-controls="stBody">'+(bad?warn:ok)+
+      '<span class="stt"><b>'+(bad?'No alcanza el '+bad.date.getDate()+' '+monShort(bad.date):'Tu saldo cubre todo')+'</b><small>'+(bad?'Te faltan '+money(-bad.after)+' para «'+esc(bad.names)+'»':'Lo más bajo: '+money(low.after)+' el '+low.date.getDate()+' '+monShort(low.date))+'</small></span>'+sparkHtml(m)+chev+'</button>'+
+      '<div class="stbody" id="stBody"><div class="stin">'+lineHtml(m)+'<p class="cv-say" id="cvSay" aria-live="polite"></p></div></div></div>';
+    cvDefault();
+  }
+  /* scrub the line with a finger or the mouse */
+  function lcPos(e){
+    var svg=$('lcSvg');if(!svg||!cvEv)return;var r=svg.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*cvEv.W;
+    var day=Math.max(0,Math.min(HOR,Math.round((x-cvEv.padL)/(cvEv.W-cvEv.padL-cvEv.padR)*HOR))),a=cvAt(day),g=$('lcGuide');
+    g.style.opacity=1;g.style.transform='translateX('+cvEv.xs(day)+'px)';g.querySelector('circle').setAttribute('cy',cvEv.ys(a.bal).toFixed(1));cvSay(a);
+  }
+  $('payCover').addEventListener('pointerdown',function(e){if(e.target.closest('.lh')){this.__sc=true;try{e.target.setPointerCapture(e.pointerId)}catch(_){}lcPos(e)}});
+  $('payCover').addEventListener('pointermove',function(e){if(this.__sc)lcPos(e)});
+  ['pointerup','pointercancel'].forEach(function(ev){$('payCover').addEventListener(ev,function(){if(this.__sc){this.__sc=false;cvDefault()}})});
+  $('payCover').addEventListener('click',function(e){
+    var b=e.target.closest('#stBtn');if(!b)return;
+    stOpen=!stOpen;var c=$('coverIn');c.classList.toggle('open',stOpen);b.setAttribute('aria-expanded',stOpen?'true':'false');
+    if(stOpen){c.classList.remove('play');void c.offsetWidth;c.classList.add('play');setTimeout(function(){c.classList.remove('play')},1600);setTimeout(function(){c.scrollIntoView({block:'nearest',behavior:REDUCED.matches?'auto':'smooth'})},120)}
+  });
+  var CALSEL='';
+  function dotsFor(p){return '<i class="'+(p.paid?'paid':p.diff<=3?'soon':'')+'"></i>'}
+  function cardRow(p,enterId,maxA,n){
+    var soon=p.diff<=3&&!p.paid,over=p.diff<0&&!p.paid,when=nxtLabel(p.diff),mon=monShort(p.date).toUpperCase();
+    var lp=lastPaidAt(p),pct=p.total>0?Math.round(Math.min(1,(p.done||0)/p.total)*100):0;
+    var sub=p.paid?'<span class="sub paid-t">Pagado el '+new Date(lp||Date.now()).getDate()+' '+monShort(new Date(lp||Date.now()))+'</span>':'<span class="sub'+(soon?' soon-t':'')+'">'+when+'</span>';
+    var nt=payNote(p).replace(/^monto variable$/,'').replace(/ · monto variable$/,''),note=p.total>0?'<div class="cbar" role="img" aria-label="'+p.done+' de '+p.total+' cuotas pagadas"><i style="width:'+pct+'%"></i></div><span class="sub">'+esc(nt)+'</span>':(nt?'<span class="sub">'+esc(nt)+'</span>':'');
+    return '<div class="prow card'+(p.id===enterId?' enter':'')+'" data-id="'+p.id+'" style="--n:'+n+'"><div class="pswipe"><div class="pback" aria-hidden="true">'+CHECKI+'<span>Pagado</span></div>'+
+      '<div class="pay pfront'+(p.paid?' paid':'')+'"><div class="dtile'+(over?' over':soon?' soon':'')+(p.paid?' paid':'')+'" aria-hidden="true"><span>'+mon+'</span><b>'+p.date.getDate()+'</b></div>'+
+      '<div class="cmid"><div class="t">'+esc(p.n)+'</div><span class="ca"><b>'+(p.v?'Variable':money(p.a))+'</b> '+sub+'</span>'+note+'</div>'+
+      '<div class="pr prc"><span class="pact">'+(p.paid?'':'<button type="button" class="paynow" data-id="'+p.id+'" aria-label="Marcar '+esc(p.n)+' como pagado">Pagar</button>')+'<button type="button" class="alarm" data-id="'+p.id+'" aria-pressed="'+(S.alarms[p.id]?'true':'false')+'" aria-label="Alarma en calendario para '+esc(p.n)+'"><span class="al-bg" aria-hidden="true"></span>'+BELL+'</button></span></div>'+
       '</div></div></div>';
   }
+  function viewHtml(list,enterId,maxA){
+    $('runway').hidden=true;
+    if(enterId){var ep=list.filter(function(p){return p.id===enterId&&!p.paid&&p.diff>=0})[0];if(ep)CALSEL=iso(ep.date)}
+    var t=today0(),dow=(t.getDay()+6)%7,st=new Date(t);st.setDate(st.getDate()-dow);
+    var weeks=Math.ceil((dow+HOR+1)/7),by={};list.forEach(function(p){(by[iso(p.date)]=by[iso(p.date)]||[]).push(p)});
+    var cs0=CALSEL?CALSEL.split('-'):null,csPast=cs0&&new Date(+cs0[0],+cs0[1]-1,+cs0[2])<t;
+    if(!CALSEL||csPast||(!by[CALSEL]&&CALSEL!==iso(t))){var first=list.filter(function(p){return !p.paid&&p.diff>=0})[0];CALSEL=iso(first?first.date:t)}
+    var late=list.filter(function(p){return !p.paid&&p.diff<0}),h2=late.length?'<h3 class="pgrp">Atrasados</h3>'+late.map(function(p,i4){return cardRow(p,enterId,maxA,i4)}).join(''):'';
+    var grid='<div class="ccal"><div class="cwk" aria-hidden="true">'+'LMMJVSD'.split('').map(function(c){return '<span>'+c+'</span>'}).join('')+'</div><div class="cgrid" role="group" aria-label="Calendario de pagos">';
+    for(var i2=0;i2<weeks*7;i2++){
+      var d=new Date(st);d.setDate(st.getDate()+i2);var k=iso(d),its=by[k]||[],diff=Math.round((d-t)/864e5),past=diff<0,out=diff>HOR;
+      grid+='<button type="button" class="cday'+(past?' past':'')+(out?' out':'')+(diff===0?' today':'')+(its.length?' has':'')+(k===CALSEL?' sel':'')+'" data-d="'+k+'" style="--n:'+i2+'" aria-pressed="'+(k===CALSEL?'true':'false')+'" aria-label="'+d.toLocaleDateString('es',{weekday:'long',day:'numeric',month:'long'})+(its.length?': '+its.map(function(p){return esc(p.n)}).join(', '):': sin pagos')+'">'+(d.getDate()===1||i2===0?'<small>'+monShort(d)+'</small>':'')+'<span>'+d.getDate()+'</span><span class="cdots">'+its.slice(0,3).map(dotsFor).join('')+'</span></button>';
+    }
+    grid+='</div></div>';
+    var sd=CALSEL.split('-'),sdt=new Date(+sd[0],+sd[1]-1,+sd[2]),sel=(by[CALSEL]||[]).filter(function(p){return !(p.diff<0&&!p.paid)});
+    h2+='<p class="csel">'+sdt.toLocaleDateString('es',{weekday:'long',day:'numeric',month:'long'}).replace(/^./,function(c){return c.toUpperCase()})+'</p>';
+    h2+=sel.length?sel.map(function(p,i3){return cardRow(p,enterId,maxA,i3)}).join(''):'<p class="note" style="margin:8px 2px 0">Nada vence este día.</p>';
+    return h2+grid;
+  }
+  $('pays').addEventListener('click',function(e){var b=e.target.closest('.cday');if(!b)return;CALSEL=b.dataset.d;renderPagos()});
   function renderPagos(enterId){
     updHist();
     var list=payList(),inH=list.filter(function(p){return p.diff<=HOR&&!p.paid});
     $('payHint').hidden=!list.length;
     if(!list.length){
       setNum($('payTotal'),0,400);$('payLead').textContent=S.hide?'Montos ocultos.':'por pagar en '+HOR+' días';$('payAfter').hidden=true;
-      $('runway').innerHTML='';$('pays').innerHTML='<p class="note" style="margin:16px 0 0;font-size:15px">Todavía no tienes pagos. Agrega el primero.</p>';return;
+      $('runway').innerHTML='';$('payHero').innerHTML='';$('payCover').innerHTML='';$('pays').innerHTML='<p class="note" style="margin:16px 0 0;font-size:15px">Todavía no tienes pagos. Agrega el primero.</p>';return;
     }
     var maxA=Math.max.apply(null,list.filter(function(p){return !p.v}).map(function(p){return p.a}).concat([1]));
     var total=inH.filter(function(p){return !p.v}).reduce(function(s,p){return s+p.a},0),vc=inH.filter(function(p){return p.v}).length;
     setNum($('payTotal'),total,600);
     $('payLead').textContent=S.hide?'Montos ocultos.':'por pagar en '+HOR+' días'+(vc?' · más '+vc+' variable':'');
     var pa=$('payAfter'),pb=balanceAt(Date.now())-total;pa.hidden=S.hide||!S.inc.length;pa.textContent=pb<0?'Con esto tu saldo quedaría en negativo.':'Tu saldo después de pagarlo: '+money(pb);
-    var end=today0();end.setDate(end.getDate()+HOR);
-    var h='<div class="rtrack" role="group" aria-label="Pagos de los próximos '+HOR+' días"><i class="rline"></i>';
-    [7,14,21,28].forEach(function(d){h+='<i class="rtick" style="left:'+(d/HOR*100)+'%;--d:'+d+'"></i>'});
-    h+='<span class="rnow" aria-hidden="true"></span><span class="rlbl l">hoy</span><span class="rlbl r">'+end.getDate()+' '+monShort(end)+'</span>';
-    inH.forEach(function(p){
-      var soon=p.diff<=3;
-      h+='<button type="button" class="peg'+(soon?' soon':'')+(p.v?' var':'')+(p.id===enterId?' new':'')+'" data-id="'+p.id+'" style="left:'+(p.diff/HOR*100)+'%;--s:'+pegSize(p,maxA)+'px;--d:'+p.diff+'" aria-label="'+esc(p.n)+', '+p.date.getDate()+' '+monShort(p.date)+(p.v?', monto variable':', '+(S.hide?'monto oculto':money(p.a)))+'"><i></i><span>'+p.date.getDate()+'</span></button>';
-    });
-    $('runway').innerHTML=h+'</div>';
-    $('pays').innerHTML=list.map(function(p){return payRow(p,enterId,maxA)}).join('');
+    var nowT=today0(),end=new Date(nowT);end.setDate(end.getDate()+HOR);
+    $('payHero').innerHTML='';
+    /* does the balance cover what is coming? payments stack in date order against the balance */
+    renderCover(inH,balanceAt(Date.now()));
+    /* 30-day horizon: one column per day, payments rise as bars */
+    var cols=HOR+1,byDay={};inH.forEach(function(p){(byDay[Math.max(0,Math.min(p.diff,HOR))]=byDay[Math.max(0,Math.min(p.diff,HOR))]||[]).push(p)});
+    var h='<div class="sk-track" role="group" aria-label="Pagos de los próximos '+HOR+' días">';
+    for(var dd=0;dd<cols;dd++){
+      var ps=byDay[dd];
+      if(ps){
+        var tt=ps.reduce(function(t,p){return t+(p.v?0:p.a)},0),isVar=ps.every(function(p){return p.v}),hh=isVar?34:Math.round(16+Math.sqrt(tt/maxA)*66),soonD=dd<=3;
+        h+='<button type="button" class="sk p'+(soonD?' soon':'')+(isVar?' var':'')+(dd===0?' today':'')+'" data-id="'+ps[0].id+'" style="--h:'+hh+'px;--n:'+dd+'" aria-label="'+ps.map(function(p){return esc(p.n)}).join(', ')+', '+nxtLabel(dd)+'"><i></i></button>';
+      }else h+='<span class="sk'+(dd===0?' today':'')+'" style="--n:'+dd+'"><i></i></span>';
+    }
+    h+='</div><div class="sk-lbl"><span>hoy</span><span>'+end.getDate()+' '+monShort(end)+'</span></div>';
+    $('runway').innerHTML=h;
+    $('payAfter').hidden=true;
+    $('pays').innerHTML=viewHtml(list,enterId,maxA);
   }
   function playRunway(){
-    var r=$('runway');r.classList.remove('play');void r.offsetWidth;r.classList.add('play');
-    clearTimeout(rT);rT=setTimeout(function(){r.classList.remove('play')},1900);
+    var r=$('runway'),h=$('payHero').firstChild,c=$('coverIn'),l=$('pays');
+    [r,h,c,l].forEach(function(e){if(e){e.classList.remove('play');void e.offsetWidth;e.classList.add('play')}});
+    clearTimeout(rT);rT=setTimeout(function(){[r,h,c,l].forEach(function(e){if(e)e.classList.remove('play')})},2600);
   }
   function flashRow(id){
     var row=$('pays').querySelector('.prow[data-id="'+id+'"]');if(!row)return;
@@ -1727,7 +2026,8 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     var pg=$('runway').querySelector('.peg[data-id="'+id+'"]');if(!pg)return;
     pg.classList.remove('hl');void pg.offsetWidth;pg.classList.add('hl');setTimeout(function(){pg.classList.remove('hl')},900);
   }
-  $('runway').addEventListener('click',function(e){var b=e.target.closest('.peg');if(b)flashRow(+b.dataset.id)});
+  $('runway').addEventListener('click',function(e){var b=e.target.closest('.sk.p');if(b){flashRow(+b.dataset.id);b.classList.remove('hl');void b.offsetWidth;b.classList.add('hl');setTimeout(function(){b.classList.remove('hl')},900)}});
+  $('payHero').addEventListener('click',function(e){var b=e.target.closest('.payhero');if(b)flashRow(+b.dataset.id)});
 
   /* a paid payment becomes an expense automatically (and can be undone) */
   var undoFn=null;
@@ -1738,8 +2038,8 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     var occ=iso(payDate(p)),m={id:S.nid++,a:amount,c:p.c,k:p.k,t:Date.now(),pid:p.id,n:p.n},pid=p.id,mid=m.id;
     S.moves.unshift(m);S.paid[p.id]={d:occ,mid:m.id,t:Date.now()};save();
     renderPagos(p.id);renderMes();renderMetas();updateRep();
-    var pNotice=(balSub()+' Queda en «Pagos hechos».').trim();
-    gToast(p.n+' pagado · '+money(amount),function(){
+    var fin=payFinished(p),dn=payDone(p),pNotice=((p.total>0&&!fin?'Cuota '+dn+' de '+p.total+'. ':'')+balSub()+' Queda en «Pagos hechos».').trim();
+    gToast(fin?p.n+': ¡última cuota pagada!':p.n+' pagado · '+money(amount),function(){
       S.moves=S.moves.filter(function(x){return x.id!==mid});delete S.paid[pid];save();
       renderPagos(pid);renderMes();renderMetas();updateRep();
     },pNotice);
@@ -1818,7 +2118,7 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
   /* add a payment: the same simple flow as the first screen (keypad + two buttons) */
   var NAMES=['Renta','Luz','Agua','Gas','Internet','Celular','Netflix','Spotify','Gimnasio','Seguro'];
   var NCAT={Renta:'Casa',Luz:'Casa',Agua:'Casa',Gas:'Casa',Internet:'Casa',Celular:'Casa',Netflix:'Ocio',Spotify:'Ocio',Gimnasio:'Salud',Seguro:'Salud'};
-  var A2={amt:'',name:null,day:null,isVar:false,editId:0},addT=0,addOpen=false;
+  var A2={amt:'',name:null,day:null,isVar:false,editId:0,every:1,total:0,off:0},addT=0,addOpen=false;
   function applyKey(s,k){
     if(k==='del')return s.slice(0,-1);
     if(k==='.')return s.indexOf('.')<0?(s||'0')+'.':s;
@@ -1831,12 +2131,16 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     else if(!A2.amt){a.textContent='0';sl.classList.add('empty')}
     else{var p=A2.amt.split('.');a.textContent=Number(p[0]||0).toLocaleString('en-US')+(p.length>1?'.'+p[1]:'');sl.classList.remove('empty')}
     setPickText($('a2NameT'),A2.name||'Nombre');setPickText($('a2DayT'),A2.day?'Día '+A2.day:'Día');
+    var ev=A2.every,evT=ev===1?'Cada mes':ev===12?'Cada año':'Cada '+ev+' meses';
+    setPickText($('a2EveryT'),evT);$('a2Every').classList.toggle('on',ev!==1);
+    setPickText($('a2TotT'),A2.total>0?A2.total+' cuotas':'Sin fin');$('a2Tot').classList.toggle('on',A2.total>0);
+    $('a2Off').hidden=!(A2.total>0);setPickText($('a2OffT'),'Ya van '+A2.off);$('a2Off').classList.toggle('on',A2.off>0);
     $('a2Name').classList.toggle('unset',!A2.name);$('a2Day').classList.toggle('unset',!A2.day);
     $('a2Save').disabled=!((A2.isVar||parseFloat(A2.amt)>0)&&A2.name&&A2.day);
   }
   function openAdd(editP,anchor){
     var ed=editP&&editP.id;
-    A2=ed?{amt:editP.v?'':String(editP.a),name:editP.n,day:editP.day,isVar:!!editP.v,editId:editP.id}:{amt:'',name:null,day:null,isVar:false,editId:0};
+    A2=ed?{amt:editP.v?'':String(editP.a),name:editP.n,day:editP.day,isVar:!!editP.v,editId:editP.id,every:payEvery(editP),total:editP.total||0,off:editP.off||0}:{amt:'',name:null,day:null,isVar:false,editId:0,every:1,total:0,off:0};
     var s=$('addScr'),btn=anchor||$('addPay');
     s.classList.remove('out','open');s.classList.toggle('var',A2.isVar);$('a2Var').setAttribute('aria-pressed',A2.isVar?'true':'false');
     $('a2Title').textContent=ed?'Editar pago':'Nuevo pago';$('a2Save').textContent=ed?'Guardar cambios':'Agregar pago';a2Show();
@@ -1871,12 +2175,33 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
   $('a2Day').addEventListener('click',function(){
     openPicker($('a2Day'),{mode:'grid',title:'Día del mes · se repite cada mes',value:A2.day,onPick:function(v){A2.day=v;a2Show()}});
   });
+  $('a2Every').addEventListener('click',function(){
+    var a=this,opts=[[1,'Cada mes'],[2,'Cada 2 meses'],[3,'Cada 3 meses'],[6,'Cada 6 meses'],[12,'Cada año']];
+    openPicker(a,{title:'Se repite',items:opts.map(function(o){return{label:o[1],n:o[0],checked:A2.every===o[0]}}).concat([{label:'Otro número…',other:true}]),onPick:function(it){
+      if(it.other){openPicker(a,{mode:'input',num:true,title:'Cada cuántos meses',placeholder:'Por ejemplo, 4',value:String(A2.every),onPick:function(v){A2.every=Math.max(1,Math.min(60,+v));a2Show()}});return}
+      A2.every=it.n;a2Show();
+    }});
+  });
+  $('a2Tot').addEventListener('click',function(){
+    var a=this,opts=[0,2,3,4,6,9,12,18,24,36];
+    openPicker(a,{title:'Cuántos pagos',items:opts.map(function(n){return{label:n?n+' cuotas':'Sin fin',n:n,checked:A2.total===n}}).concat([{label:'Otro número…',other:true}]),onPick:function(it){
+      if(it.other){openPicker(a,{mode:'input',num:true,title:'Número de cuotas',placeholder:'Por ejemplo, 15',value:A2.total?String(A2.total):'',onPick:function(v){A2.total=Math.max(1,Math.min(240,+v));if(A2.off>=A2.total)A2.off=A2.total-1;a2Show()}});return}
+      A2.total=it.n;if(!A2.total)A2.off=0;else if(A2.off>=A2.total)A2.off=A2.total-1;a2Show();
+    }});
+  });
+  $('a2Off').addEventListener('click',function(){
+    openPicker(this,{mode:'input',num:true,title:'Cuotas que ya pagaste',placeholder:'0',value:String(A2.off),onPick:function(v){A2.off=Math.max(0,Math.min(A2.total-1,Math.round(+v)));a2Show()}});
+  });
   $('a2Save').addEventListener('click',function(){
     if($('a2Save').disabled)return;
     if(A2.editId){
       var q=payById(A2.editId);if(!q)return;
-      var wasPaid=!!(S.paid[q.id]&&S.paid[q.id].d===iso(payDate(q))),kindChanged=!!q.v!==A2.isVar;
+      var wasPaid=!!(S.paid[q.id]&&S.paid[q.id].d===iso(payDate(q))),kindChanged=!!q.v!==A2.isVar,nd0=payDate(q),moved=A2.every!==payEvery(q)||A2.total!==(q.total||0)||A2.off!==(q.off||0);
       q.n=A2.name;q.day=A2.day;if(A2.isVar){q.v=1;delete q.a}else{delete q.v;q.a=parseFloat(A2.amt)}
+      if(moved){
+        q.every=A2.every;if(A2.total>0){q.total=A2.total;q.off=A2.off}else{delete q.total;delete q.off}
+        var kk=q.total>0?payDone(q):0,mo=monthsOf(nd0.getFullYear(),nd0.getMonth())-kk*A2.every;q.from={y:Math.floor(mo/12),m:mo%12};
+      }
       if(kindChanged)q.note=A2.isVar?'Cambia cada mes':'Pago mensual';
       if(NCAT[A2.name])q.c=NCAT[A2.name];
       if(wasPaid)S.paid[q.id].d=iso(payDate(q));
@@ -1886,6 +2211,10 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     }
     var p={id:S.nid++,n:A2.name,day:A2.day,c:NCAT[A2.name]||'Casa',k:S.acct,note:A2.isVar?'Cambia cada mes':'Pago mensual'};
     if(A2.isVar)p.v=1;else p.a=parseFloat(A2.amt);
+    if(A2.every>1)p.every=A2.every;
+    if(A2.total>0){p.total=A2.total;p.off=A2.off}
+    var t0=today0(),fd=dayIn(t0.getFullYear(),t0.getMonth(),A2.day),fm=monthsOf(t0.getFullYear(),t0.getMonth())+(fd<t0?1:0),mo0=fm-(p.total>0?p.off:0)*A2.every;
+    p.from={y:Math.floor(mo0/12),m:mo0%12};
     S.pays.push(p);save();closeAdd();
     setTimeout(function(){renderPagos(p.id);setTimeout(function(){flashRow(p.id)},650)},REDUCED.matches?0:420);
   });
@@ -1895,10 +2224,10 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
   function pdReset(){pdSure=0;clearTimeout(pdSureT);var b=$('pdDel');b.classList.remove('sure');b.textContent='Borrar pago'}
   function openPD(id,rowEl){
     var p=payById(id);if(!p)return;pdId=id;pdReset();
-    var q=payList().filter(function(x){return x.id===id})[0],when=q.diff===0?'hoy':q.diff===1?'mañana':'en '+q.diff+' días';
+    var q=payList().filter(function(x){return x.id===id})[0],when=nxtLabel(q.diff);
     $('pdTitle').textContent=p.n;
-    $('pdSum').textContent=(p.v?'Monto variable':money(p.a))+' · el día '+p.day+' de cada mes';
-    $('pdSub').textContent=q.paid?'Pagado este mes · próximo '+q.date.getDate()+' '+monShort(q.date):'Próximo: '+q.date.getDate()+' '+monShort(q.date)+' · '+when;
+    $('pdSum').textContent=(p.v?'Monto variable':money(p.a))+' · el día '+p.day+' · '+freqText(p);
+    $('pdSub').textContent=p.total>0?(q.paid?'Cuota '+q.done+' de '+p.total+' pagada · próxima '+q.date.getDate()+' '+monShort(q.date):'Próxima: cuota '+(q.done+1)+' de '+p.total+' · '+q.date.getDate()+' '+monShort(q.date)+' · '+when):(q.paid?'Pagado · próximo '+q.date.getDate()+' '+monShort(q.date):'Próximo: '+q.date.getDate()+' '+monShort(q.date)+' · '+when);
     var s=$('pdMod');s.classList.remove('out','open');clearTimeout(pdT);s.hidden=false;
     var r=s.getBoundingClientRect(),bb=rowEl.getBoundingClientRect();
     s.style.setProperty('--ox',Math.max(0,Math.min(r.width,bb.left+bb.width/2-r.left))+'px');s.style.setProperty('--oy',(bb.top+bb.height/2-r.top)+'px');
@@ -1947,7 +2276,7 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     setTimeout(function(){doPay(p,p.a)},620);
   }
   $('pays').addEventListener('pointerdown',function(e){
-    var f=e.target.closest('.pfront');if(!f||e.target.closest('.alarm,.paidbtn')||f.classList.contains('paid'))return;
+    var f=e.target.closest('.pfront');if(!f||e.target.closest('.alarm,.paidbtn,.paynow')||f.classList.contains('paid'))return;
     if(e.pointerType==='touch')return;
     if(e.pointerType==='mouse'&&e.button!==0)return;
     sw={f:f,sw:f.parentNode,x:e.clientX,y:e.clientY,id:e.pointerId,drag:false,dx:0,w:f.offsetWidth};
@@ -1975,7 +2304,7 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     tsw=null;deckLock(false);
     if(e.touches.length!==1)return;
     var t=e.touches[0],f=e.target.closest('.pfront');
-    if(!f||e.target.closest('.alarm,.paidbtn')||f.classList.contains('paid'))return;
+    if(!f||e.target.closest('.alarm,.paidbtn,.paynow')||f.classList.contains('paid'))return;
     tsw={f:f,sw:f.parentNode,x:t.clientX,y:t.clientY,drag:false,dx:0,w:f.offsetWidth};
     deckLock(true);
   },{passive:true});
@@ -1997,7 +2326,7 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     if(s.dx>s.w*0.38)commitPay(s);else springBack(s);
   },{passive:false})});
   $('pays').addEventListener('click',function(e){
-    var pb=e.target.closest('.paidbtn');
+    var pb=e.target.closest('.paidbtn,.paynow');
     if(pb){
       var p=payById(+pb.dataset.id);if(!p)return;
       if(p.v){openPayDlg(p);return}
