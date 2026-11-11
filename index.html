@@ -488,7 +488,6 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
       <div id="legend" style="margin-top:8px"></div>
       <div class="sechead"><h2 class="sec">Día por día</h2><span class="hint" id="hint" aria-live="polite">Más grande, más gasto · toca un día</span></div>
       <div class="days" id="days" role="group" aria-label="Gasto por día. Toca un día para ver su detalle. Desliza para cambiar de mes."></div>
-      <p class="note ex" id="exNote" hidden>Gastos de ejemplo. <button type="button" class="linkbtn" id="clearEx">Borrar ejemplos</button></p>
       </div>
     </section>
 
@@ -501,7 +500,6 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
       <p class="hint pgh" id="payHint">Desliza un pago a la derecha para marcarlo pagado. Tócalo para editarlo o borrarlo.</p>
       <div id="pays"></div>
       <button type="button" class="addpay" id="addPay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Agregar pago</button>
-      <p class="note">Boceto: en la app real, la campana crea el evento con alarma en el calendario del iPhone.</p>
     </section>
 
     <section class="panel read" id="p3" aria-label="Metas">
@@ -642,8 +640,8 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
   function clean(o){
     if(!o||typeof o!=='object'||Array.isArray(o))return null;
     var ok=function(x){return x&&typeof x==='object'&&num(x.a)&&x.a>0&&num(x.t)};
-    o.moves=(Array.isArray(o.moves)?o.moves:[]).filter(ok).map(function(x){x.c=CATS.indexOf(x.c)>=0?x.c:'Casa';x.k=typeof x.k==='string'?x.k:'Tarjeta';return x});
-    if(Array.isArray(o.inc))o.inc=o.inc.filter(ok).map(function(x){x.l=typeof x.l==='string'?x.l:'Extra';x.k=typeof x.k==='string'?x.k:'Banco';return x});else delete o.inc;
+    o.moves=(Array.isArray(o.moves)?o.moves:[]).filter(function(x){return ok(x)&&!x.ex}).map(function(x){x.c=CATS.indexOf(x.c)>=0?x.c:'Casa';x.k=typeof x.k==='string'?x.k:'Tarjeta';return x});
+    if(Array.isArray(o.inc))o.inc=o.inc.filter(function(x){return ok(x)&&!x.ex}).map(function(x){x.l=typeof x.l==='string'?x.l:'Extra';x.k=typeof x.k==='string'?x.k:'Banco';return x});else delete o.inc;
     if(Array.isArray(o.goals))o.goals=o.goals.filter(function(g){return g&&typeof g==='object'&&num(g.target)&&g.target>0}).map(function(g){
       g.name=typeof g.name==='string'&&g.name?g.name:'Meta';g.hist=(Array.isArray(g.hist)?g.hist:[]).filter(function(h){return h&&num(h.a)&&h.a>0&&num(h.t)});
       var sum=g.hist.reduce(function(t,h){return t+h.a},0);g.saved=num(g.saved)&&g.saved>=0?g.saved:sum;return g});
@@ -657,30 +655,10 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     if(!(o.ocioCap>0))delete o.ocioCap;
     return o;
   }
-  var S0=clean(load()),S=S0||{moves:[
-    {id:1,a:620,c:'Comida',k:'Tarjeta',t:ago(0),ex:1},{id:2,a:140,c:'Transporte',k:'Efectivo',t:ago(0),ex:1},
-    {id:3,a:980,c:'Casa',k:'Banco',t:ago(2),ex:1},{id:4,a:380,c:'Ocio',k:'Tarjeta',t:ago(3),ex:1},
-    {id:5,a:800,c:'Comida',k:'Tarjeta',t:ago(5),ex:1},{id:6,a:500,c:'Transporte',k:'Banco',t:ago(7),ex:1},
-    {id:7,a:160,c:'Salud',k:'Efectivo',t:ago(8),ex:1}],
-    hide:false,cat:'Comida',acct:'Tarjeta',alarms:{1:true},nid:200};
-  if(!S0){
-    var pmo=new Date();pmo.setDate(1);pmo.setMonth(pmo.getMonth()-1);
-    [[1,6500,'Casa','Banco'],[4,380,'Comida','Tarjeta'],[7,360,'Transporte','Efectivo'],[9,460,'Salud','Efectivo'],[11,320,'Comida','Tarjeta'],[14,640,'Ocio','Tarjeta'],[18,400,'Comida','Efectivo'],[21,360,'Transporte','Banco']].forEach(function(r,i){
-      S.moves.push({id:101+i,a:r[1],c:r[2],k:r[3],t:new Date(pmo.getFullYear(),pmo.getMonth(),r[0],12).getTime(),ex:1});
-    });
-  }
+  var S0=clean(load()),S=S0||{moves:[],inc:[],hide:false,cat:'Comida',acct:'Tarjeta',alarms:{},nid:1};
 
-  if(S.ocioCap>0)OCIO_CAP=S.ocioCap;
   /* the general pool: money in (S.inc) minus expenses, paid bills and money set aside for goals */
-  (function(){
-    var seed=!S.inc;S.inc=S.inc||[];
-    if(seed&&S.moves.some(function(x){return x.ex})){
-      var n=new Date();
-      S.inc.push({id:S.nid++,a:12000,l:'Sueldo',k:'Banco',t:new Date(n.getFullYear(),n.getMonth()-1,1,9).getTime(),ex:1});
-      S.inc.push({id:S.nid++,a:12000,l:'Sueldo',k:'Banco',t:new Date(n.getFullYear(),n.getMonth(),1,9).getTime(),ex:1});
-    }
-    if(S0&&seed)try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}
-  })();
+  S.inc=S.inc||[];
   function sumTo(a,upto){return a.reduce(function(t,x){return x.t<=upto?t+x.a:t},0)}
   /* goal savings that existed before (demo or starting amounts) do not come out of the pool */
   function goalHist(){var h=[];(S.goals||[]).forEach(function(g){(g.hist||[]).forEach(function(x){if(!x.ex&&!x.init)h.push(x)})});return h}
@@ -1068,7 +1046,6 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
       dot.style.width=sz+'px';dot.style.height=sz+'px';
       c.setAttribute('aria-label','Día '+d+' de '+mname+(fut?'':(v?(S.hide?': con gastos':': '+money(v)+' en '+cnt+(cnt===1?' gasto':' gastos')):': sin gastos'))+(mesFilter&&!fut?' de '+mesFilter:''));
     });
-    $('exNote').hidden=!(S.moves.some(function(x){return x.ex})||S.inc.some(function(x){return x.ex}));
   }
 
   /* month navigation: arrows, swipe over the calendar, tap the name to come back */
@@ -1187,25 +1164,44 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
   var DAY30=30*864e5;
   if(!S.bkAt){S.bkAt=Date.now();save()}
   function stamp(t){var d=new Date(t);return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
+  /* hand a generated file to the person: Claude viewer, share sheet (iPhone), or a plain download */
+  function offerFile(name,mime,text){
+    return new Promise(function(resolve,reject){
+      function dl(){
+        var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:mime}));a.download=name;document.body.appendChild(a);a.click();
+        setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1500);resolve();
+      }
+      function viaShare(){
+        var file=null;try{file=new File([text],name,{type:mime})}catch(_){}
+        if(file&&navigator.canShare&&navigator.canShare({files:[file]}))navigator.share({files:[file]}).then(resolve,function(err){if(err&&err.name==='AbortError')reject(err);else dl()});
+        else dl();
+      }
+      var viaClaude=window.claude&&window.claude.use?window.claude.use('downloads'):Promise.resolve(null);
+      viaClaude.then(function(d){
+        if(!d)return viaShare();
+        return d.save({filename:name,data:text}).then(resolve,function(err){if(err&&err.code==='declined')reject(err);else viaShare()});
+      },viaShare);
+    });
+  }
   function doBackup(){
     var now=Date.now(),json=JSON.stringify({app:'alcancia',v:1,at:now,data:S},null,1),name='alcancia-respaldo-'+stamp(now)+'.json';
-    var done=function(){S.bkAt=Date.now();save();toast('Respaldo guardado','Guarda el archivo en un lugar seguro, como iCloud Drive.')};
-    function dl(){
-      var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([json],{type:'application/json'}));a.download=name;document.body.appendChild(a);a.click();
-      setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1500);done();
-    }
-    function viaShare(){
-      var file=null;try{file=new File([json],name,{type:'application/json'})}catch(_){}
-      if(file&&navigator.canShare&&navigator.canShare({files:[file]}))navigator.share({files:[file]}).then(done,function(err){if(err&&err.name!=='AbortError')dl()});
-      else dl();
-    }
-    /* inside the Claude viewer the page cannot download by itself: ask the platform; elsewhere share sheet / plain download */
-    var viaClaude=window.claude&&window.claude.use?window.claude.use('downloads'):Promise.resolve(null);
-    viaClaude.then(function(d){
-      if(!d)return viaShare();
-      return d.save({filename:name,data:json}).then(done,function(err){if(!err||err.code!=='declined')viaShare()});
-    },viaShare);
+    offerFile(name,'application/json',json).then(function(){S.bkAt=Date.now();save();toast('Respaldo guardado','Guarda el archivo en un lugar seguro, como iCloud Drive.')},function(){});
   }
+  /* the bell: a monthly calendar event with a reminder the day before and on the day */
+  function icsEsc(t){return String(t).replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n')}
+  function icsStamp(d,h){return d.getFullYear()+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)+'T'+('0'+h).slice(-2)+'0000'}
+  function payIcs(p){
+    var d=payDate(p),now=new Date(),u=now.toISOString().replace(/[-:]/g,'').replace(/\.\d+/,'');
+    var sum=p.n+(p.v?'':' · $'+Math.round(p.a).toLocaleString('en-US'));
+    var rule=p.day<=28?'FREQ=MONTHLY;BYMONTHDAY='+p.day:'FREQ=MONTHLY;BYMONTHDAY=-1';
+    return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Alcancia//ES','CALSCALE:GREGORIAN','BEGIN:VEVENT',
+      'UID:alcancia-pago-'+p.id+'-'+now.getTime()+'@alcancia','DTSTAMP:'+u,'DTSTART:'+icsStamp(d,9),'DTEND:'+icsStamp(d,10),'RRULE:'+rule,
+      'SUMMARY:'+icsEsc('Pagar '+sum),
+      'BEGIN:VALARM','TRIGGER:-P1D','ACTION:DISPLAY','DESCRIPTION:'+icsEsc('Mañana vence: '+p.n),'END:VALARM',
+      'BEGIN:VALARM','TRIGGER:PT0S','ACTION:DISPLAY','DESCRIPTION:'+icsEsc('Hoy vence: '+p.n),'END:VALARM',
+      'END:VEVENT','END:VCALENDAR'].join('\r\n')+'\r\n';
+  }
+  window.payAlarm=function(p){return offerFile('pago-'+p.n.replace(/[^a-z0-9]+/gi,'-').toLowerCase()+'.ics','text/calendar',payIcs(p))};
   function openSalary(b){
     openPicker(b,{mode:'input',num:true,title:'Sueldo fijo al mes',placeholder:'Por ejemplo, 12000',value:S.salary?String(S.salary.a):'',onPick:function(v){
       setTimeout(function(){openPicker(b,{mode:'grid',title:'Día del mes en que llega',value:S.salary?S.salary.day:1,onPick:function(d){
@@ -1262,16 +1258,11 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
   /* the reminder waits for the Mes panel, so it never covers the keypad */
   var bkAsked=false;
   window.bkRemind=function(){if(bkAsked||Date.now()-S.bkAt<=DAY30)return;bkAsked=true;setTimeout(function(){gToast('Hace un mes que no guardas un respaldo',doBackup,'','Guardar')},700)};
-  $('clearEx').addEventListener('click',function(){S.moves=S.moves.filter(function(x){return !x.ex});S.inc=S.inc.filter(function(x){return !x.ex});save();renderAll()});
   $('eye').addEventListener('click',function(){S.hide=!S.hide;save();renderAll()});
 
   /* payments: a 30-day line with pegs, a compact list, swipe right to mark one as paid */
   S.paid=S.paid||{};
-  if(!S.pays)S.pays=[
-    {id:1,n:'Internet',a:540,day:new Date(Date.now()+3*864e5).getDate(),note:'Aviso 1 día antes',c:'Casa',k:'Tarjeta'},
-    {id:2,n:'Cuota del celular',a:890,day:20,note:'Cuota 3 de 12',c:'Casa',k:'Tarjeta'},
-    {id:3,n:'Tarjeta Banco',v:1,day:25,note:'Cambia cada mes',c:'Casa',k:'Banco'},
-    {id:4,n:'Renta',a:6500,day:1,note:'Aviso 3 días antes',c:'Casa',k:'Banco'}];
+  if(!S.pays)S.pays=[];
   var PAYS=S.pays,HOR=30;
   var CHECKI='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
   var sw=null,gT=0,payP=null,rT=0,lastDragAt=0;
@@ -1547,10 +1538,16 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     }
     var b=e.target.closest('.alarm');
     if(b){
-      var id=b.dataset.id,on;S.alarms[id]=!S.alarms[id];on=!!S.alarms[id];save();
-      b.setAttribute('aria-pressed',on?'true':'false');
-      b.classList.remove('ring','off');void b.offsetWidth;b.classList.add(on?'ring':'off');
-      clearTimeout(b.__t);b.__t=setTimeout(function(){b.classList.remove('ring','off')},1100);
+      var id=b.dataset.id,pp=payById(+id);
+      var setBell=function(on){
+        S.alarms[id]=on;save();
+        b.setAttribute('aria-pressed',on?'true':'false');
+        b.classList.remove('ring','off');void b.offsetWidth;b.classList.add(on?'ring':'off');
+        clearTimeout(b.__t);b.__t=setTimeout(function(){b.classList.remove('ring','off')},1100);
+      };
+      if(S.alarms[id]){setBell(false);gToast('Alarma quitada de la app','' ,'Si ya la agregaste, bórrala también en Calendario.');return}
+      if(!pp)return;
+      window.payAlarm(pp).then(function(){setBell(true);gToast('Abre el archivo para agregarlo a Calendario',null,'Se repite cada mes y avisa un día antes y ese día.')},function(){gToast('No se agregó al calendario')});
       return;
     }
     var f=e.target.closest('.pfront');
@@ -1559,11 +1556,7 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
 
   /* goals: several pots, a shelf to switch between them, a detail window to fix mistakes */
   var MAXG=6;
-  if(!S.goals){
-    var og=S.goal||null;
-    S.goals=[{id:1,name:og?(og.name||'Viaje a la costa'):'Viaje a la costa',saved:og?og.saved:3200,target:og?og.target:8000,hist:og&&og.hist&&og.hist.length?og.hist:[{a:2000,t:ago(21),ex:1},{a:1200,t:ago(9),ex:1}]}];
-    delete S.goal;
-  }
+  if(!S.goals)S.goals=[];
   S.goals.forEach(function(g){
     g.hist=g.hist||[];var sum=g.hist.reduce(function(t,x){return t+x.a},0);
     if(sum<g.saved-0.005)g.hist.unshift({a:Math.round((g.saved-sum)*100)/100,t:g.hist.length?g.hist[0].t-864e5:ago(20),init:1});
