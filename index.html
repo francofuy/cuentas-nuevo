@@ -293,7 +293,7 @@ button.mp{color:inherit}
 .paidbtn:focus-visible{clip:auto;width:auto;height:auto;padding:6px 12px;border-radius:12px;background:var(--act);color:var(--on-act);font-size:13px;font-weight:600;z-index:3;overflow:visible}
 .addpay{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;margin-top:14px;border-radius:26px;box-shadow:inset 0 0 0 1.5px var(--act);color:var(--act);font-size:16px;font-weight:600;transition:background-color .2s}
 .addpay:active{background:color-mix(in srgb,var(--act) 12%,transparent)}
-.gtoast{position:absolute;left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));bottom:48px;z-index:15;background:var(--ink);color:var(--bg);border-radius:16px;min-height:48px;padding:0 6px 0 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px;font-weight:500;animation:rise .35s cubic-bezier(.16,1,.3,1)}
+.gtoast{position:absolute;left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));bottom:48px;z-index:45;background:var(--ink);color:var(--bg);border-radius:16px;min-height:48px;padding:0 6px 0 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px;font-weight:500;animation:rise .35s cubic-bezier(.16,1,.3,1)}
 .gtoast button{min-height:44px;padding:0 12px;font-weight:700;color:var(--bg);text-decoration:underline;text-underline-offset:3px}
 .mveil{position:absolute;inset:0;z-index:29;background:rgba(5,8,24,.4);opacity:0;pointer-events:none;transition:opacity .3s}
 .mveil.on{opacity:1;pointer-events:auto}
@@ -357,6 +357,15 @@ button.mp{color:inherit}
 .in-steps li{display:flex;align-items:center;gap:12px;font-size:16px;line-height:1.35}
 .in-steps b{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--act) 16%,transparent);color:var(--act);font-size:14px}
 .in-ic{display:inline-block;vertical-align:-4px;color:var(--act)}
+.payhist{display:block;margin:14px auto 0;min-height:44px;padding:0 14px;font-size:14px;font-weight:600;color:var(--act);text-decoration:underline dotted;text-decoration-thickness:1.5px;text-underline-offset:4px}
+.ph-list{max-height:min(52vh,380px);overflow-y:auto;overscroll-behavior:contain;margin:6px -6px 0;padding:0 6px;scrollbar-width:none}
+.ph-row{display:flex;align-items:center;gap:12px;width:100%;min-height:54px;padding:6px 2px;text-align:left;border-top:1px solid var(--line);animation:rowIn .45s cubic-bezier(.16,1,.3,1) backwards;animation-delay:calc(var(--i)*40ms)}
+.ph-row .sw{width:10px;height:10px;border-radius:50%;flex:none}
+.ph-row .n{flex:1;min-width:0;display:flex;flex-direction:column;font-size:16px}
+.ph-row .n b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ph-row .sub{font-size:13px;color:var(--ink2)}
+.ph-row .am{font-size:16px;font-weight:600}
+.ph-row:active{background:var(--line)}
 .pd-note{margin:10px 0 2px;font-size:12px;line-height:1.4;color:var(--ink2)}
 .gempty{padding:36px 0 8px;text-align:left}
 .gempty .note{margin:0 0 14px;font-size:15px}
@@ -610,6 +619,7 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
       <p class="hint pgh" id="payHint">Desliza un pago a la derecha para marcarlo pagado. Tócalo para editarlo o borrarlo.</p>
       <div id="pays"></div>
       <button type="button" class="addpay" id="addPay"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Agregar pago</button>
+      <button type="button" class="payhist" id="payHist" hidden aria-haspopup="dialog">Pagos hechos</button>
     </section>
 
     <section class="panel read" id="p3" aria-label="Metas">
@@ -701,7 +711,7 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     <p class="pd-sum" id="pdSum"></p>
     <p class="pd-sub" id="pdSub"></p>
     <div class="pd-row"><button type="button" class="pd-btn pd-edit" id="pdEdit">Editar</button><button type="button" class="pd-btn pd-del" id="pdDel">Borrar pago</button></div>
-    <p class="pd-note">Los gastos que ya se registraron con este pago se conservan.</p>
+    <p class="pd-note">Los pagos que ya hiciste se conservan y los ves en «Pagos hechos».</p>
   </section>
 
   <section class="addmod" id="inMod" role="dialog" aria-modal="true" aria-label="Agregar a la pantalla de inicio" tabindex="-1" hidden>
@@ -728,6 +738,12 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     <div class="cr-det" id="crDet"><div class="cr-det-in" id="crDetIn"></div></div>
     <div class="cr-leg" id="crLeg"></div>
     <button type="button" class="cm-scope" id="cmScope" hidden></button>
+  </section>
+
+  <section class="addmod" id="phMod" role="dialog" aria-modal="true" aria-label="Pagos hechos" tabindex="-1" hidden>
+    <div class="m-head"><span>Pagos hechos</span><button type="button" class="m-x" id="phClose" aria-label="Cerrar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <p class="m-q" id="phSub" style="margin-top:0">Toca uno para cambiar el monto o deshacerlo.</p>
+    <div class="ph-list" id="phList"></div>
   </section>
 
   <div class="gtoast" id="gtoast" role="status" hidden><span class="tt2"><span id="gtxt"></span><small id="gsub" hidden></small></span><button type="button" id="gundo">Deshacer</button></div>
@@ -1387,9 +1403,11 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
   /* day detail popover */
   var popOpen=false,selDay=0,popCell=null,closeT=0,lastDel=null,undoT=0;
   function dayItems(d){return (dm[d]||[]).slice().sort(function(a,b){return b.t-a.t})}
+  function moveName(x){return x.n||(x.pid&&(payById(x.pid)||{}).n)||''}
   function rowHtml(x,i){
+    var nm=moveName(x);
     return '<div class="pw" data-id="'+x.id+'" style="--i:'+i+'"><div class="pwi">'+
-      '<button type="button" class="pwr" aria-expanded="false" aria-label="'+x.c+', '+x.k+', '+(S.hide?'monto oculto':money(x.a))+'. Toca para ver opciones"><span class="sw" style="background:'+col(x.c)+'"></span><span class="n"><b>'+x.c+'</b><span class="sub">'+x.k+'</span></span><span class="am">'+money(x.a)+'</span></button>'+
+      '<button type="button" class="pwr" aria-expanded="false" aria-label="'+(nm?esc(nm)+' (pago), ':'')+x.c+', '+x.k+', '+(S.hide?'monto oculto':money(x.a))+'. Toca para ver opciones"><span class="sw" style="background:'+col(x.c)+'"></span><span class="n"><b>'+(nm?esc(nm):x.c)+'</b><span class="sub">'+(nm?x.c+' · '+x.k+' · pago':x.k)+'</span></span><span class="am">'+money(x.a)+'</span></button>'+
       '<div class="pd"><div class="pdi"><button type="button" class="pdel" data-id="'+x.id+'">Borrar gasto</button></div></div></div></div>';
   }
   function fillPop(d,still){
@@ -1435,7 +1453,7 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     closeT=setTimeout(function(){pop.hidden=true;inner.classList.remove('out')},220);
   }
   function refreshAfterChange(still){
-    renderMes();renderMetas();
+    renderMes();renderMetas();renderPagos();
     if(popOpen){var total=fillPop(selDay,still);setNum($('pTotal'),total,420)}
   }
   $('legend').addEventListener('click',function(e){
@@ -1617,7 +1635,7 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     return PAYS.map(function(p){
       var o={};for(var k in p)o[k]=p[k];
       var d=payDate(p),pd=S.paid[p.id];
-      if(pd&&pd.d===iso(d)){d=dayIn(d.getFullYear(),d.getMonth()+1,p.day);o.paid=true}
+      if(pd&&pd.d===iso(d)&&S.moves.some(function(m){return m.id===pd.mid})){d=dayIn(d.getFullYear(),d.getMonth()+1,p.day);o.paid=true}
       o.date=d;o.diff=Math.round((d-t)/864e5);return o;
     }).sort(function(a,b){return a.date-b.date});
   }
@@ -1634,6 +1652,7 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
       '</div></div></div>';
   }
   function renderPagos(enterId){
+    updHist();
     var list=payList(),inH=list.filter(function(p){return p.diff<=HOR&&!p.paid});
     $('payHint').hidden=!list.length;
     if(!list.length){
@@ -1677,15 +1696,55 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
   function gToast(txt,fn,sub,label){var t=$('gtoast'),gs=$('gsub');undoFn=fn||null;$('gundo').textContent=label||'Deshacer';$('gtxt').textContent=txt;gs.textContent=sub||'';gs.hidden=!sub;$('gundo').hidden=!fn;t.hidden=false;t.style.animation='none';void t.offsetWidth;t.style.animation='';clearTimeout(gT);gT=setTimeout(hideG,6500)}
   $('gundo').addEventListener('click',function(){var f=undoFn;if(!f)return;hideG();f()});
   function doPay(p,amount){
-    var occ=iso(payDate(p)),m={id:S.nid++,a:amount,c:p.c,k:p.k,t:Date.now(),pid:p.id},pid=p.id,mid=m.id;
+    var occ=iso(payDate(p)),m={id:S.nid++,a:amount,c:p.c,k:p.k,t:Date.now(),pid:p.id,n:p.n},pid=p.id,mid=m.id;
     S.moves.unshift(m);S.paid[p.id]={d:occ,mid:m.id,t:Date.now()};save();
     renderPagos(p.id);renderMes();renderMetas();updateRep();
-    var pNotice=balSub();
+    var pNotice=(balSub()+' Queda en «Pagos hechos».').trim();
     gToast(p.n+' pagado · '+money(amount),function(){
       S.moves=S.moves.filter(function(x){return x.id!==mid});delete S.paid[pid];save();
       renderPagos(pid);renderMes();renderMetas();updateRep();
     },pNotice);
   }
+  /* paid payments: a visible record you can fix or undo, even after the payment itself was deleted */
+  var phOpen=false,phT=0;
+  function paidMoves(){return S.moves.filter(function(x){return x.pid}).sort(function(a,b){return b.t-a.t})}
+  function updHist(){var n=paidMoves().length,b=$('payHist');b.hidden=!n;b.textContent='Pagos hechos · '+n}
+  function phRender(){
+    var ms=paidMoves();
+    $('phList').innerHTML=ms.length?ms.map(function(x,i){
+      var nm=moveName(x)||x.c,dt=new Date(x.t).toLocaleDateString('es',{day:'numeric',month:'short'}).replace('.','');
+      return '<button type="button" class="ph-row" data-id="'+x.id+'" style="--i:'+i+'" aria-label="'+esc(nm)+', pagado el '+dt+', '+(S.hide?'monto oculto':money(x.a))+'. Toca para cambiarlo o deshacerlo"><i class="sw" style="background:'+col(x.c)+'"></i><span class="n"><b>'+esc(nm)+'</b><span class="sub">'+dt+' · '+x.k+'</span></span><span class="am">'+money(x.a)+'</span></button>';
+    }).join(''):'<div class="pe">Todavía no hay pagos hechos.</div>';
+  }
+  function openPH(anchor){
+    if(phOpen)return;phRender();
+    var s=$('phMod');s.classList.remove('out','open');clearTimeout(phT);s.hidden=false;origin(s,anchor);
+    $('mVeil').classList.add('on');void s.offsetWidth;s.classList.add('open');phOpen=true;
+    $('deck').inert=true;$('dots').inert=true;s.focus({preventScroll:true});
+  }
+  function closePH(){
+    if(!phOpen)return;phOpen=false;var s=$('phMod');$('mVeil').classList.remove('on');$('deck').inert=false;$('dots').inert=false;
+    if(REDUCED.matches){s.hidden=true;s.classList.remove('open','out')}
+    else{s.classList.remove('open');s.classList.add('out');phT=setTimeout(function(){s.hidden=true;s.classList.remove('out')},240)}
+    var b=$('payHist');if(b&&!b.hidden)b.focus({preventScroll:true});
+  }
+  function undoPaid(x){
+    var idx=S.moves.indexOf(x);if(idx<0)return;S.moves.splice(idx,1);save();
+    renderAll();phRender();updHist();
+    gToast((moveName(x)||x.c)+': pago deshecho',function(){S.moves.splice(Math.min(idx,S.moves.length),0,x);save();renderAll();if(phOpen)phRender();updHist()},'Te devuelven '+money(x.a)+' a tu saldo.');
+  }
+  $('payHist').addEventListener('click',function(){openPH(this)});
+  $('phClose').addEventListener('click',closePH);
+  $('phList').addEventListener('click',function(e){
+    var r=e.target.closest('.ph-row');if(!r)return;var x=S.moves.filter(function(m){return m.id===+r.dataset.id})[0];if(!x)return;
+    openPicker(r,{title:(moveName(x)||x.c)+' · '+money(x.a),items:[{label:'Cambiar monto'},{label:'Deshacer pago'}],onPick:function(it){
+      if(it.label==='Deshacer pago'){undoPaid(x);return}
+      setTimeout(function(){openPicker(r,{mode:'input',num:true,title:'Monto pagado',placeholder:'Por ejemplo, 540',value:String(Math.round(x.a*100)/100),onPick:function(v){
+        var old=x.a;x.a=Math.round(+v*100)/100;save();renderAll();phRender();
+        gToast('Monto cambiado a '+money(x.a),function(){x.a=old;save();renderAll();if(phOpen)phRender()},balSub());
+      }})},200);
+    }});
+  });
   var payAmtStr='',payOpen=false,payT=0;
   function pmShow(){
     var a=$('pmAmt'),sl=$('pmSlot');
@@ -2206,6 +2265,7 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     },REDUCED.matches?0:260);
   });
   function closeTopModal(){
+    if(phOpen){closePH();return true}
     if(cmOpen){closeCM();return true}
     if(inOpen){closeIN();return true}
     if(pdOpen){closePD();return true}
