@@ -10,3 +10,5 @@ App personal de dinero para el iPhone: gastos rápidos, saldo del mes, pagos que
 - En el iPhone: ábrela en Safari, toca Compartir y elige «Agregar a inicio».
 
 El diseño está explicado en [DESIGN.md](DESIGN.md).
+
+_Ultima publicacion: 2026-11-11 (pila de tarjetas, categorias editables, Mes siguiente)._
