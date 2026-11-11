@@ -7,9 +7,9 @@ App personal de dinero para iPhone. Una sola página (HTML/CSS/JS sin dependenci
 
 ## Estructura
 4 paneles deslizables (scroll-snap) con 4 puntos de navegación:
-1. **Captura** (cobalto): ranura + teclado + categoría/cuenta. Tocar el «$» cambia a «+» para sumar plata.
+1. **Captura** (cobalto): ranura + teclado + categoría. Tocar el «$» cambia a «+» para sumar plata.
 2. **Mes**: saldo general, banda por categoría con marca de ritmo, leyenda filtrable, calendario día por día con popover.
-3. **Pagos**: total por pagar, tira del estado del saldo (se despliega en una línea día a día que se puede arrastrar), tarjetas de los pagos del día elegido con botón Pagar, y calendario de 5 semanas. Cuotas y frecuencia (cada N meses), historial de «Pagos hechos».
+3. **Pagos**: total por pagar, tira del estado del saldo (se despliega en una línea día a día que se puede arrastrar), tarjetas de los pagos del día elegido con botón Pagar, y calendario de 5 semanas. Cuotas, frecuencia (cada N meses), «Mes siguiente» para tarjetas de crédito (el cobro cae el mismo día pero un mes después) e historial de «Pagos hechos».
 4. **Metas**: alcancía de vidrio con líquido, aportes, marcas de avance y ritmo estimado.
 
 ## Modelo del dinero
