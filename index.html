@@ -393,6 +393,19 @@ button:focus-visible,dialog:focus-visible{outline:3px solid var(--act);outline-o
 .cr-p{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 10px;border-radius:18px;font-size:13px;font-weight:500;transition:background-color .25s,transform .25s cubic-bezier(.34,1.56,.64,1)}
 .cr-p i{width:8px;height:8px;border-radius:50%;background:var(--cc)}
 .cr-p:active{transform:scale(.95)}
+.addmod.cmod{max-height:calc(100% - 76px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
+.cr-det{display:grid;grid-template-rows:0fr;transition:grid-template-rows .55s cubic-bezier(.16,1,.3,1)}
+.cr-det.open{grid-template-rows:1fr}
+.cr-det-in{min-height:0;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;gap:6px 16px}
+.cr-dc{padding-top:10px;padding-bottom:8px;border-top:1px solid var(--line);margin-top:10px;opacity:0;transform:translateY(6px);transition:opacity .4s,transform .5s cubic-bezier(.16,1,.3,1);transition-delay:calc(var(--i)*70ms + 120ms)}
+.cr-det.open .cr-dc{opacity:1;transform:none}
+.cr-dh{margin:0 0 4px;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--ink2)}
+.cr-dh span{margin-left:auto;font-weight:500}
+.cr-dl{margin:0;display:flex;justify-content:space-between;font-size:14px;line-height:1.7}
+.cr-dl span{color:var(--ink2)}
+.cr-dl b{font-weight:600}
+.cr-dm{margin:0;font-size:12px;color:var(--ink2)}
+@media (prefers-reduced-motion:reduce){.cr-det,.cr-dc{transition:none!important}}
 .cr-p[aria-pressed="true"]{background:color-mix(in srgb,var(--cc) 20%,transparent);font-weight:700}
 button.cmp{position:relative;font:inherit;font-size:13px;font-weight:600;text-align:left;padding:0;cursor:pointer}
 button.cmp::after{content:"";position:absolute;inset:-12px -8px}
@@ -662,6 +675,7 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
       <p class="cr-tot b" id="crTb"></p>
     </div>
     <p class="cr-cap" id="crCap" aria-live="polite"></p>
+    <div class="cr-det" id="crDet"><div class="cr-det-in" id="crDetIn"></div></div>
     <div class="cr-leg" id="crLeg"></div>
     <button type="button" class="cm-scope" id="cmScope" hidden></button>
   </section>
@@ -1202,15 +1216,32 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     $('crSvg').classList.toggle('f',!!crFocus);
     $('crSvg').querySelectorAll('.cr-g').forEach(function(g){g.classList.toggle('on',g.dataset.c===crFocus)});
     $('crLeg').querySelectorAll('.cr-p').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.c===crFocus?'true':'false')});
+    crDetail();
     if(!c){$('crCap').textContent='Sin cambios entre estos meses.';return}
     var d=Math.round((ta[c]-tb[c])*100)/100,w=Math.abs(d)<0.5?'igual':d>0?'<span class="up">'+money(d)+' más</span>':'<span class="down">'+money(-d)+' menos</span>';
     if(S.hide){$('crCap').textContent='Montos ocultos.';return}
     $('crCap').innerHTML=(crFocus?'':'Lo que más cambió · ')+'<b>'+c+'</b> · '+money(ta[c])+' frente a '+money(tb[c])+' · '+w;
   }
+  function crDetail(){
+    var det=$('crDet'),c=crFocus;
+    if(!c){det.classList.remove('open');return}
+    var h='';
+    [['a',cm.a],['b',cm.b]].forEach(function(w,i){
+      var o=w[1],ms=monthMovesOf(o.y,o.m).filter(function(x){return x.c===c&&(!cm.upto||new Date(x.t).getDate()<=cm.upto)}).sort(function(p,q){return q.a-p.a}),
+          tot=ms.reduce(function(t,x){return t+x.a},0);
+      h+='<div class="cr-dc" style="--i:'+i+'"><p class="cr-dh"><i class="cm-dot '+w[0]+'"></i>'+cmName(o.y,o.m)+'<span>'+(ms.length===1?'1 gasto':ms.length+' gastos')+'</span></p>';
+      if(!ms.length)h+='<p class="cr-dm">Sin gastos</p>';
+      ms.slice(0,3).forEach(function(x){h+='<p class="cr-dl"><span>día '+new Date(x.t).getDate()+'</span><b>'+money(x.a)+'</b></p>'});
+      if(ms.length>3)h+='<p class="cr-dm">y '+(ms.length-3)+' más · '+money(tot-ms.slice(0,3).reduce(function(t,x){return t+x.a},0))+'</p>';
+      h+='</div>';
+    });
+    $('crDetIn').innerHTML=h;
+    det.classList.remove('open');void det.offsetWidth;det.classList.add('open');
+  }
   function cmRender(first){
     var now=new Date(),upto=(cm.scope&&(cmIsCur(cm.a)||cmIsCur(cm.b)))?now.getDate():0;
     var ta=cmTotals(cm.a.y,cm.a.m,upto),tb=cmTotals(cm.b.y,cm.b.m,upto),sa=0,sb=0;
-    CATS.forEach(function(c){sa+=ta[c];sb+=tb[c]});cm.ta=ta;cm.tb=tb;
+    CATS.forEach(function(c){sa+=ta[c];sb+=tb[c]});cm.ta=ta;cm.tb=tb;cm.upto=upto;
     $('cmAt').textContent=cmName(cm.a.y,cm.a.m);$('cmBt').textContent=cmName(cm.b.y,cm.b.m);
     var diff=Math.round((sa-sb)*100)/100,ar=$('cmArrow');
     ar.className='cm-arrow '+(Math.abs(diff)<0.5?'same':diff>0?'up':'down');ar.innerHTML=Math.abs(diff)<0.5?EQ:diff>0?UP:DOWN;
