@@ -677,7 +677,8 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
 .cv-say{margin:12px 2px 0;min-height:40px;font-size:14px;line-height:1.4;color:var(--ink2)}
 .cv-say b{color:var(--ink);font-weight:600}
 .cv-say.bad b{color:var(--amber)}
-@media (prefers-reduced-motion:reduce){.cover.play .ll,.cover.play .la,.cover.play .lm,/* ===== Pagos (prueba): estado del saldo plegable y botón Pagar ===== */
+@media (prefers-reduced-motion:reduce){.cover.play .ll,.cover.play .la,.cover.play .lm{animation:none!important}.lg{transition:none!important}}
+/* ===== Pagos: estado del saldo plegable y botón Pagar ===== */
 .cover{margin-top:14px}
 .stchip{display:flex;align-items:center;gap:10px;width:100%;min-height:58px;padding:8px 12px 8px 12px;border-radius:20px;text-align:left;background:color-mix(in srgb,var(--act) 11%,transparent);color:var(--act);transition:background-color .3s,transform .3s cubic-bezier(.34,1.56,.64,1)}
 .stchip:active{transform:scale(.985)}
