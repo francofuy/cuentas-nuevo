@@ -372,6 +372,50 @@ button:focus-visible,dialog:focus-visible{outline:3px solid var(--act);outline-o
 .gadd{display:inline-flex;align-items:center;gap:6px;margin-top:12px;min-height:44px;padding:0 18px 0 14px;border-radius:22px;background:var(--act);color:var(--on-act);font-size:15px;font-weight:600;transition:transform .18s cubic-bezier(.16,1,.3,1)}
 .gadd:active{transform:scale(.95)}
 .addmod.plum{--act:var(--act3)}
+.addmod.cmod{--act:var(--act1)}
+.cr-wrap{margin-top:14px}
+.cr-tot{margin:0 0 6px;font-size:13px;font-weight:600;color:var(--ink2);display:flex;align-items:center;gap:7px}
+.cr-tot::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--act);flex:none}
+.cr-tot.b{margin:6px 0 0}
+.cr-tot.b::before{background:color-mix(in srgb,var(--act) 38%,transparent);box-shadow:inset 0 0 0 1.5px var(--act)}
+.cr-svg{display:block;width:100%;height:auto;overflow:visible;touch-action:manipulation}
+.cr-g{cursor:pointer;transition:opacity .35s}
+.cr-g .sa,.cr-g .sb{fill:var(--cc)}
+.cr-g .sb{fill-opacity:.55}
+.cr-g .rb{fill:var(--cc);fill-opacity:.26;transition:fill-opacity .35s}
+.cr-svg.f .cr-g{opacity:.16}
+.cr-svg.f .cr-g.on{opacity:1}
+.cr-svg.f .cr-g.on .rb{fill-opacity:.5}
+.cr-cap{margin:14px 0 0;min-height:42px;text-align:center;font-size:14px;line-height:1.4;color:var(--ink)}
+.cr-cap b{font-weight:700}
+.cr-cap .up{color:var(--amber);font-weight:700}.cr-cap .down{color:var(--act);font-weight:700}
+.cr-leg{display:flex;flex-wrap:wrap;justify-content:center;gap:2px 4px;margin-top:2px}
+.cr-p{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 10px;border-radius:18px;font-size:13px;font-weight:500;transition:background-color .25s,transform .25s cubic-bezier(.34,1.56,.64,1)}
+.cr-p i{width:8px;height:8px;border-radius:50%;background:var(--cc)}
+.cr-p:active{transform:scale(.95)}
+.cr-p[aria-pressed="true"]{background:color-mix(in srgb,var(--cc) 20%,transparent);font-weight:700}
+button.cmp{position:relative;font:inherit;font-size:13px;font-weight:600;text-align:left;padding:0;cursor:pointer}
+button.cmp::after{content:"";position:absolute;inset:-12px -8px}
+.cmp .cmgo{opacity:.55;margin-left:-2px;transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+button.cmp:active .cmgo{transform:translateX(3px)}
+.cm-chips{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:2px}
+.cm-chip{display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:0 12px 0 11px;border-radius:22px;background:color-mix(in srgb,var(--ink) 7%,transparent);font-size:15px;font-weight:600;transition:background-color .25s,transform .25s cubic-bezier(.34,1.56,.64,1)}
+.cm-chip:active{transform:scale(.96);background:var(--line)}
+.cm-chip svg{opacity:.6}
+.cm-chip span{display:inline-block;min-width:4.2em;text-align:left}
+.cm-dot{width:10px;height:10px;border-radius:50%;flex:none}
+.cm-dot.a{background:var(--act)}
+.cm-dot.b{background:color-mix(in srgb,var(--act) 38%,transparent);box-shadow:inset 0 0 0 1.5px var(--act)}
+.cm-swap{width:40px;height:44px;display:grid;place-items:center;border-radius:20px;color:var(--ink2);transition:transform .45s cubic-bezier(.34,1.56,.64,1)}
+.cm-swap.turn{transform:rotate(180deg)}
+.cm-hero{display:flex;align-items:baseline;justify-content:center;gap:8px;margin-top:12px;font-size:15px;color:var(--ink2)}
+.cm-hero b{font-size:34px;letter-spacing:-0.02em;color:var(--ink)}
+.cm-arrow{display:inline-grid;place-items:center;align-self:center;width:26px;height:26px;border-radius:50%;transition:background-color .3s,color .3s,transform .5s cubic-bezier(.34,1.56,.64,1)}
+.cm-arrow.up{background:color-mix(in srgb,var(--amber) 18%,transparent);color:var(--amber)}
+.cm-arrow.down{background:color-mix(in srgb,var(--act) 16%,transparent);color:var(--act)}
+.cm-arrow.same{background:var(--line);color:var(--ink2)}
+.cm-scope{display:block;margin:6px auto 0;min-height:40px;padding:0 10px;font-size:13px;font-weight:600;color:var(--act);text-decoration:underline dotted;text-decoration-thickness:1.5px;text-underline-offset:4px}
+@media (prefers-reduced-motion:reduce){.cm-swap,.cm-arrow,.cr-g,.cr-g .rb,.cr-p{transition:none!important}}
 .gburst{position:absolute;left:50%;top:17px;width:0;height:0;pointer-events:none}
 .gb{position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;background:var(--act);opacity:0}
 .gb:nth-child(even){background:var(--amberf)}
@@ -485,7 +529,7 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
       <p class="big" id="left">$0</p>
       <p class="lead" id="leadTxt"></p>
       <p class="flow" id="flowTxt" hidden></p>
-      <p class="cmp" id="cmpTxt" hidden></p>
+      <button type="button" class="cmp" id="cmpTxt" hidden aria-haspopup="dialog" aria-label="Comparar meses"></button>
       <div class="bandwrap" id="bandwrap"><div class="band" id="band" aria-hidden="true"></div><i class="pace off" id="pace" aria-hidden="true"></i></div>
       <p class="pacetxt" id="paceTxt" hidden></p>
       <div id="legend" style="margin-top:8px"></div>
@@ -602,6 +646,24 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     <ol class="in-steps"><li><b>1</b><span>Toca <svg class="in-ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4M8 8l4-4 4 4M6 11H5a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7a1 1 0 0 0-1-1h-1"/></svg> Compartir, en la barra de Safari.</span></li><li><b>2</b><span>Elige «Agregar a inicio».</span></li></ol>
     <p class="pd-note">Así se abre como una app y Safari no borra tus datos.</p>
     <div class="pd-row"><button type="button" class="pd-btn" id="inLater">Ahora no</button><button type="button" class="pd-btn pd-edit" id="inDone">Ya la agregué</button></div>
+  </section>
+
+  <section class="addmod cmod" id="cmMod" role="dialog" aria-modal="true" aria-label="Comparar meses" tabindex="-1" hidden>
+    <div class="m-head"><span>Comparar meses</span><button type="button" class="m-x" id="cmClose" aria-label="Cerrar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="cm-chips">
+      <button type="button" class="cm-chip" id="cmA" aria-haspopup="dialog"><i class="cm-dot a"></i><span id="cmAt"></span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <button type="button" class="cm-swap" id="cmSwap" aria-label="Intercambiar los meses"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4L3 8l4 4M3 8h14M17 20l4-4-4-4M21 16H7"/></svg></button>
+      <button type="button" class="cm-chip" id="cmB" aria-haspopup="dialog"><i class="cm-dot b"></i><span id="cmBt"></span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+    </div>
+    <div class="cm-hero" aria-live="polite"><span class="cm-arrow" id="cmArrow" aria-hidden="true"></span><b id="cmDelta">$0</b><span id="cmWord"></span></div>
+    <div class="cr-wrap">
+      <p class="cr-tot" id="crTa"></p>
+      <svg class="cr-svg" id="crSvg" viewBox="0 0 300 150" role="img" aria-label="Dos barras de gasto por categoría unidas por listones"></svg>
+      <p class="cr-tot b" id="crTb"></p>
+    </div>
+    <p class="cr-cap" id="crCap" aria-live="polite"></p>
+    <div class="cr-leg" id="crLeg"></div>
+    <button type="button" class="cm-scope" id="cmScope" hidden></button>
   </section>
 
   <div class="gtoast" id="gtoast" role="status" hidden><span class="tt2"><span id="gtxt"></span><small id="gsub" hidden></small></span><button type="button" id="gundo">Deshacer</button></div>
@@ -1030,7 +1092,7 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
       var diff=Math.round((spent-pSpent)*100)/100,pName=pv.toLocaleDateString('es',{month:'long'});
       cmp.hidden=false;cmp.className='cmp '+(Math.abs(diff)<0.5?'':diff>0?'up':'down');
       var arrow=Math.abs(diff)<0.5?'':'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(diff>0?'<path d="M12 19V5M5 12l7-7 7 7"/>':'<path d="M12 5v14M5 12l7 7 7-7"/>')+'</svg>';
-      cmp.innerHTML=arrow+'<span>'+(Math.abs(diff)<0.5?'Igual que en '+pName:money(Math.abs(diff))+(diff>0?' más':' menos')+' que en '+pName)+(isCur?' a esta fecha':'')+'</span>';
+      cmp.innerHTML=arrow+'<span>'+(Math.abs(diff)<0.5?'Igual que en '+pName:money(Math.abs(diff))+(diff>0?' más':' menos')+' que en '+pName)+(isCur?' a esta fecha':'')+'</span><svg class="cmgo" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
     }
     $('mNext').disabled=isCur;
     var limit=new Date(now.getFullYear(),now.getMonth()-12,1);$('mPrev').disabled=new Date(y,mo,1)<=limit;
@@ -1093,6 +1155,108 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5){lastSwipeAt=Date.now();goMonth(dx>0?-1:1)}
   });
   $('days').addEventListener('pointercancel',function(){mSw=null});
+
+  /* compare two months (version B): two bands joined by ribbons */
+  var cmOpen=false,cmT=0,cm=null,cmBuilt=false,crCur=null,crAnim=0,crFocus=null;
+  function cmName(y,m){var n=new Date(y,m,1).toLocaleDateString('es',{month:'long'}).replace(/^./,function(c){return c.toUpperCase()});return y!==new Date().getFullYear()?n+' '+y:n}
+  function cmTotals(y,m,upto){var t={};CATS.forEach(function(c){t[c]=0});monthMovesOf(y,m).forEach(function(x){if(!upto||new Date(x.t).getDate()<=upto)t[x.c]=(t[x.c]||0)+x.a});return t}
+  var UP='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>',
+      DOWN='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>',
+      EQ='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M5 9h14M5 15h14"/></svg>';
+  function cmIsCur(o){var n=new Date();return o.y===n.getFullYear()&&o.m===n.getMonth()}
+  function cmBuild(){
+    var g='';CATS.forEach(function(c){g+='<g class="cr-g" data-c="'+c+'" style="--cc:'+col(c)+'"><path class="rb"/><rect class="sa" y="0" height="30" rx="6"/><rect class="sb" y="120" height="30" rx="6"/></g>'});
+    $('crSvg').innerHTML=g;
+    $('crLeg').innerHTML=CATS.map(function(c){return '<button type="button" class="cr-p" data-c="'+c+'" aria-pressed="false" style="--cc:'+col(c)+'"><i></i>'+c+'</button>'}).join('');
+    cmBuilt=true;
+  }
+  function crDraw(geo){
+    CATS.forEach(function(c){
+      var v=geo[c],g=$('crSvg').querySelector('.cr-g[data-c="'+c+'"]'),a=g.querySelector('.sa'),b=g.querySelector('.sb');
+      a.setAttribute('x',v[0]+.7);a.setAttribute('width',Math.max(0,v[1]-v[0]-1.4));
+      b.setAttribute('x',v[2]+.7);b.setAttribute('width',Math.max(0,v[3]-v[2]-1.4));
+      g.querySelector('.rb').setAttribute('d','M'+v[0]+' 31C'+v[0]+' 75 '+v[2]+' 75 '+v[2]+' 119L'+v[3]+' 119C'+v[3]+' 75 '+v[1]+' 75 '+v[1]+' 31Z');
+    });
+  }
+  function crGeo(ta,tb){
+    var sa=0,sb=0;CATS.forEach(function(c){sa+=ta[c];sb+=tb[c]});
+    var sc=300/Math.max(sa,sb,1),x=0,y=0,geo={};
+    CATS.forEach(function(c){var a0=x;x+=ta[c]*sc;var b0=y;y+=tb[c]*sc;geo[c]=[a0,x,b0,y]});
+    return geo;
+  }
+  function crGo(target,first){
+    cancelAnimationFrame(crAnim);
+    var from=first||!crCur?(function(){var z={};CATS.forEach(function(c){z[c]=[0,0,0,0]});return z})():crCur;
+    if(REDUCED.matches){crCur=target;crDraw(target);return}
+    var t0=performance.now(),ms=first?950:650;
+    (function step(t){
+      var p=Math.min(1,(t-t0)/ms),e=1-Math.pow(1-p,3),cur={};
+      CATS.forEach(function(c){cur[c]=target[c].map(function(v,i){return from[c][i]+(v-from[c][i])*e})});
+      crCur=cur;crDraw(cur);
+      if(p<1)crAnim=requestAnimationFrame(step);else crCur=target;
+    })(t0);
+  }
+  function crCaption(){
+    var ta=cm.ta,tb=cm.tb,c=crFocus,txt;
+    if(!c){var best=0;CATS.forEach(function(k){var d=Math.abs(ta[k]-tb[k]);if(d>best){best=d;c=k}});if(best<0.5)c=null}
+    $('crSvg').classList.toggle('f',!!crFocus);
+    $('crSvg').querySelectorAll('.cr-g').forEach(function(g){g.classList.toggle('on',g.dataset.c===crFocus)});
+    $('crLeg').querySelectorAll('.cr-p').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.c===crFocus?'true':'false')});
+    if(!c){$('crCap').textContent='Sin cambios entre estos meses.';return}
+    var d=Math.round((ta[c]-tb[c])*100)/100,w=Math.abs(d)<0.5?'igual':d>0?'<span class="up">'+money(d)+' más</span>':'<span class="down">'+money(-d)+' menos</span>';
+    if(S.hide){$('crCap').textContent='Montos ocultos.';return}
+    $('crCap').innerHTML=(crFocus?'':'Lo que más cambió · ')+'<b>'+c+'</b> · '+money(ta[c])+' frente a '+money(tb[c])+' · '+w;
+  }
+  function cmRender(first){
+    var now=new Date(),upto=(cm.scope&&(cmIsCur(cm.a)||cmIsCur(cm.b)))?now.getDate():0;
+    var ta=cmTotals(cm.a.y,cm.a.m,upto),tb=cmTotals(cm.b.y,cm.b.m,upto),sa=0,sb=0;
+    CATS.forEach(function(c){sa+=ta[c];sb+=tb[c]});cm.ta=ta;cm.tb=tb;
+    $('cmAt').textContent=cmName(cm.a.y,cm.a.m);$('cmBt').textContent=cmName(cm.b.y,cm.b.m);
+    var diff=Math.round((sa-sb)*100)/100,ar=$('cmArrow');
+    ar.className='cm-arrow '+(Math.abs(diff)<0.5?'same':diff>0?'up':'down');ar.innerHTML=Math.abs(diff)<0.5?EQ:diff>0?UP:DOWN;
+    setNum($('cmDelta'),Math.abs(diff),700,first?0:undefined);
+    $('cmWord').textContent=Math.abs(diff)<0.5?'igual':diff>0?'más gastado':'menos gastado';
+    $('crTa').textContent=cmName(cm.a.y,cm.a.m)+' · '+money(sa);$('crTb').textContent=cmName(cm.b.y,cm.b.m)+' · '+money(sb);
+    crGo(crGeo(ta,tb),first);crCaption();
+    var sc=$('cmScope'),has=cmIsCur(cm.a)||cmIsCur(cm.b);sc.hidden=!has;
+    if(has)sc.textContent=cm.scope?'Hasta el día '+now.getDate()+' · ver mes completo':'Mes completo · ver hasta el día '+now.getDate();
+  }
+  function cmPickMonth(which,anchor){
+    var now=new Date(),items=[],other=which==='a'?cm.b:cm.a,cur=which==='a'?cm.a:cm.b;
+    for(var i=0;i<13;i++){var d=new Date(now.getFullYear(),now.getMonth()-i,1);items.push({label:cmName(d.getFullYear(),d.getMonth()),y:d.getFullYear(),m:d.getMonth(),checked:d.getFullYear()===cur.y&&d.getMonth()===cur.m})}
+    openPicker(anchor,{title:which==='a'?'Mes principal':'Comparar con',items:items,onPick:function(it){
+      if(it.y===other.y&&it.m===other.m){var t={y:cur.y,m:cur.m};if(which==='a'){cm.a={y:it.y,m:it.m};cm.b=t}else{cm.b={y:it.y,m:it.m};cm.a=t}}
+      else if(which==='a')cm.a={y:it.y,m:it.m};else cm.b={y:it.y,m:it.m};
+      cmRender();
+    }});
+  }
+  function openCM(anchor){
+    if(cmOpen)return;closePop(true);
+    var pv=new Date(viewY,viewM-1,1);
+    cm={a:{y:viewY,m:viewM},b:{y:pv.getFullYear(),m:pv.getMonth()},scope:true};crFocus=null;crCur=null;
+    var s=$('cmMod');s.classList.remove('out','open','shown');clearTimeout(cmT);s.hidden=false;
+    if(!cmBuilt)cmBuild();
+    cmRender(true);
+    origin(s,anchor);
+    $('mVeil').classList.add('on');void s.offsetWidth;s.classList.add('open');cmOpen=true;
+    requestAnimationFrame(function(){s.classList.add('shown')});
+    $('deck').inert=true;$('dots').inert=true;s.focus({preventScroll:true});
+  }
+  function closeCM(){
+    if(!cmOpen)return;cmOpen=false;cancelAnimationFrame(crAnim);var s=$('cmMod');$('mVeil').classList.remove('on');$('deck').inert=false;$('dots').inert=false;
+    if(REDUCED.matches){s.hidden=true;s.classList.remove('open','out','shown')}
+    else{s.classList.remove('open');s.classList.add('out');cmT=setTimeout(function(){s.hidden=true;s.classList.remove('out','shown')},240)}
+    var b=$('cmpTxt');if(b&&!b.hidden)b.focus({preventScroll:true});
+  }
+  function crToggle(c){crFocus=crFocus===c?null:c;crCaption()}
+  $('crSvg').addEventListener('click',function(e){var g=e.target.closest('.cr-g');if(g)crToggle(g.dataset.c)});
+  $('crLeg').addEventListener('click',function(e){var b=e.target.closest('.cr-p');if(b)crToggle(b.dataset.c)});
+  $('cmpTxt').addEventListener('click',function(){openCM(this)});
+  $('cmClose').addEventListener('click',closeCM);
+  $('cmA').addEventListener('click',function(){cmPickMonth('a',this)});
+  $('cmB').addEventListener('click',function(){cmPickMonth('b',this)});
+  $('cmSwap').addEventListener('click',function(){var t=cm.a;cm.a=cm.b;cm.b=t;this.classList.toggle('turn');cmRender()});
+  $('cmScope').addEventListener('click',function(){cm.scope=!cm.scope;cmRender()});
 
   /* day detail popover */
   var popOpen=false,selDay=0,popCell=null,closeT=0,lastDel=null,undoT=0;
@@ -1874,6 +2038,7 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     },REDUCED.matches?0:260);
   });
   function closeTopModal(){
+    if(cmOpen){closeCM();return true}
     if(inOpen){closeIN();return true}
     if(pdOpen){closePD();return true}
     if(ngOpen){closeNG();return true}
@@ -1886,14 +2051,14 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
 
   /* an installed app can stay alive for days: when you come back on another day, refresh "today" */
   /* no zoom at all: the app always fills the screen */
-  (function(){
+  try{(function(){
     var vp=document.querySelector('meta[name="viewport"]');
     if(vp&&!/user-scalable=no/.test(vp.content))vp.setAttribute('content',vp.content+', maximum-scale=1, user-scalable=no');
     ['gesturestart','gesturechange','gestureend'].forEach(function(t){document.addEventListener(t,function(e){e.preventDefault()},{passive:false})});
     document.addEventListener('touchmove',function(e){if(e.touches&&e.touches.length>1)e.preventDefault()},{passive:false});
     window.addEventListener('wheel',function(e){if(e.ctrlKey)e.preventDefault()},{passive:false});
     document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&(e.key==='+'||e.key==='-'||e.key==='='||e.key==='0'))e.preventDefault()});
-  })();
+ })()}catch(e){}
   var lastDayKey=new Date().toDateString();
   function dayCheck(){
     var k=new Date().toDateString();if(k===lastDayKey)return;lastDayKey=k;
