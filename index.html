@@ -39,6 +39,9 @@
 
 *{box-sizing:border-box}
 html,body{height:100%;touch-action:pan-x pan-y;-webkit-text-size-adjust:100%;overscroll-behavior:none}
+html,body{position:fixed;inset:0;width:100%;overflow:hidden}
+html.kb body{align-items:start}
+html.kb .dots{display:none}
 body{margin:0;background:var(--surround);color:var(--ink);font-family:var(--sys);font-variant-numeric:tabular-nums;-webkit-text-size-adjust:100%;display:grid;place-items:center}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
@@ -824,10 +827,24 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     if(e.key==='Enter'){e.preventDefault();$('save').click()}
     else if(e.key==='Escape'){e.preventDefault();exitTxt()}
   });
-  if(window.visualViewport)window.visualViewport.addEventListener('resize',function(){
-    var a=$('app');if(!txt){a.style.height='';return}
-    a.style.height=window.visualViewport.height+'px';window.scrollTo(0,0);
-  });
+  /* keyboard: keep the app glued to the visible area (iPhone scrolls the page when a text box gets focus) */
+  var appEl=$('app'),vv=window.visualViewport,fitT=0;
+  function fitView(){
+    window.scrollTo(0,0);document.body.scrollTop=0;document.documentElement.scrollTop=0;
+    var open=false;
+    if(vv){
+      var h=vv.height,top=vv.offsetTop;open=window.innerHeight-h>80;
+      if(open){appEl.style.height=Math.min(h,932)+'px';appEl.style.transform='translateY('+top+'px)'}
+      else{appEl.style.height='';appEl.style.transform=''}
+    }
+    document.documentElement.classList.toggle('kb',open);
+    if(typeof pkFit==='function')pkFit();
+  }
+  function fitSoon(){fitView();clearTimeout(fitT);fitT=setTimeout(fitView,120);setTimeout(fitView,350)}
+  if(vv){vv.addEventListener('resize',fitView);vv.addEventListener('scroll',fitView)}
+  window.addEventListener('scroll',function(){if(window.scrollY||window.scrollX)window.scrollTo(0,0)});
+  document.addEventListener('focusin',function(e){if(/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))fitSoon()});
+  document.addEventListener('focusout',fitSoon);
 
   $('save').addEventListener('click',function(){
     if(incMode&&!txt){
@@ -869,7 +886,11 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
   });
 
   /* compact floating pickers (replace the big bottom sheets) */
-  var pkOpen=false,pkAnchor=null,pkT=0,pkCur=null;
+  var pkOpen=false,pkAnchor=null,pkT=0,pkCur=null,pkPos=null;
+  function pkFit(){
+    if(!pkOpen||!pkPos)return;var pk=$('pk'),H=pk.offsetHeight,ah=$('app').clientHeight,y=Math.max(12,Math.min(pkPos.y,ah-H-12));
+    pk.style.transform='translate('+pkPos.left+'px,'+y+'px)';
+  }
   function pkClose(instant,noFocus){
     if(!pkOpen)return;pkOpen=false;
     var pk=$('pk'),inn=$('pkIn');$('pkVeil').hidden=true;clearTimeout(pkT);
@@ -899,7 +920,7 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     var ar=$('app').getBoundingClientRect(),ab=anchor.getBoundingClientRect(),H=pk.offsetHeight,cx=ab.left+ab.width/2-ar.left;
     var left=Math.max(12,Math.min(cx-W/2,ar.width-W-12)),below=ab.bottom-ar.top+8+H<ar.height-12;
     var y=below?ab.bottom-ar.top+8:Math.max(12,ab.top-ar.top-8-H);
-    pk.style.transform='translate('+left+'px,'+y+'px)';
+    pkPos={left:left,y:y};pk.style.transform='translate('+left+'px,'+y+'px)';
     inn.style.setProperty('--ox',(cx-left)+'px');inn.style.setProperty('--oy',below?'0px':'100%');
     void inn.offsetWidth;inn.classList.add('in');pkOpen=true;
     var inp=body.querySelector('input');
