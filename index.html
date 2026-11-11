@@ -737,6 +737,40 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
 .cat-del{flex:none;min-width:46px;height:40px;border-radius:20px;display:grid;place-items:center;color:var(--ink2);font-size:14px;font-weight:600;transition:background-color .25s,color .25s,padding .25s}
 .cat-del.sure{padding:0 14px;background:color-mix(in srgb,var(--c4) 16%,transparent);color:var(--c4)}
 .cat-sub{margin:8px 4px 10px!important;font-size:13px;line-height:1.35;text-align:center;color:var(--ink2)}
+
+/* ===== Pagos: pila de tarjetas que se abre en abanico ===== */
+.stk{position:relative;isolation:isolate;margin-top:10px}
+.stk>.prow.card{margin-top:0}
+.stk .prow.card .pswipe{background:color-mix(in srgb,var(--ink) 5%,var(--pbg))}
+.stk>.prow.card:first-child{position:relative;z-index:3}
+.stk>.prow.card:first-child .pswipe{transition:box-shadow .5s}
+.stk:not(.open)>.prow.card:first-child .pswipe{box-shadow:0 10px 20px -12px rgba(5,10,40,.5)}
+.stk:not(.open)>.prow.card:first-child.gone{grid-template-rows:1fr;transition-delay:0s,.15s}
+.stk-peek{position:relative;height:12px;transition:height .6s cubic-bezier(.16,1,.3,1),opacity .4s}
+.stk.deep .stk-peek{height:20px}
+.stk-peek::before,.stk-peek::after{content:"";position:absolute;border-radius:0 0 18px 18px;transition:transform .6s cubic-bezier(.16,1,.3,1)}
+.stk-peek::before{left:12px;right:12px;top:-18px;height:30px;z-index:2;background:color-mix(in srgb,var(--ink) 9%,var(--pbg))}
+.stk-peek::after{display:none;left:24px;right:24px;top:-18px;height:40px;z-index:1;background:color-mix(in srgb,var(--ink) 13%,var(--pbg))}
+.stk.deep .stk-peek::after{display:block}
+.stk.open .stk-peek{height:0;opacity:0}
+.stk.open .stk-peek::before,.stk.open .stk-peek::after{transform:translateY(-14px)}
+.stk-rest{display:grid;grid-template-rows:0fr;transition:grid-template-rows .6s cubic-bezier(.16,1,.3,1)}
+.stk.open .stk-rest{grid-template-rows:1fr}
+.stk-in{min-height:0;overflow:hidden}
+.stk-in>.prow.card{margin-top:10px;animation:none!important;opacity:0;transform:translateY(-26px) scale(.95);transform-origin:50% 0;
+  transition-property:grid-template-rows,opacity,transform;transition-duration:.36s,.3s,.5s;transition-timing-function:cubic-bezier(.16,1,.3,1),ease,cubic-bezier(.5,0,.75,0);
+  transition-delay:0s,var(--d,0s),var(--d,0s);--d:calc((var(--m) - var(--n))*26ms)}
+.stk.open .stk-in>.prow.card{opacity:1;transform:none;transition-timing-function:cubic-bezier(.16,1,.3,1),ease,cubic-bezier(.3,1.4,.5,1);transition-duration:.36s,.4s,.65s;--d:calc(var(--n)*65ms + 70ms)}
+.stk-in>.prow.card.gone,.stk.open .stk-in>.prow.card.gone{opacity:0;--d:0s}
+.stk-more{display:flex;align-items:center;gap:6px;margin:8px auto 0;min-height:34px;padding:0 14px 0 16px;border-radius:17px;background:color-mix(in srgb,var(--ink) 7%,transparent);color:var(--ink2);font-size:14px;font-weight:600;transition:background-color .25s,transform .3s cubic-bezier(.34,1.56,.64,1),margin .5s cubic-bezier(.16,1,.3,1)}
+.stk-more:active{transform:scale(.95)}
+.stk.open .stk-more{margin-top:14px}
+.stk-more svg{transition:transform .5s cubic-bezier(.34,1.56,.64,1)}
+.stk.open .stk-more svg{transform:rotate(180deg)}
+.stk.late .stk-more{background:color-mix(in srgb,var(--c4) 13%,transparent);color:var(--c4)}
+.prow.promote{animation:promote .65s cubic-bezier(.3,1.4,.5,1) backwards}
+@keyframes promote{from{transform:translateY(18px) scale(.94);opacity:.35}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.stk-rest,.stk-peek,.stk-in>.prow.card,.stk-more,.stk-more svg{transition:none!important}.prow.promote{animation:none}}
 </style>
 </head>
 <body>
@@ -2055,6 +2089,27 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
   });
   var CALSEL='';
   function dotsFor(p){return '<i class="'+(p.paid?'paid':p.diff<=3?'soon':'')+'"></i>'}
+  /* several payments on one day (or overdue): one card on top, the rest tucked underneath until you open them */
+  var STK={day:false,late:false},PROMO=null;
+  var CHEVI='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+  function stackHtml(items,enterId,maxA,key){
+    if(items.length<2)return items.map(function(p,i){return cardRow(p,enterId,maxA,i)}).join('');
+    var arr=items.filter(function(p){return !p.paid}).concat(items.filter(function(p){return p.paid}));
+    if(enterId&&arr.some(function(p,i){return i>0&&p.id===enterId}))STK[key]=true;
+    var open=!!STK[key],rest=arr.slice(1),sum=rest.filter(function(p){return !p.v&&!p.paid}).reduce(function(t,p){return t+p.a},0),
+        lab='Y '+rest.length+' más'+(sum>0?' · '+money(sum):'');
+    return '<div class="stk'+(open?' open':'')+(key==='late'?' late':'')+(rest.length>1?' deep':'')+'" data-k="'+key+'" data-lab="'+esc(lab)+'" style="--m:'+rest.length+'">'+cardRow(arr[0],enterId,maxA,0)+
+      '<div class="stk-peek" aria-hidden="true"></div>'+
+      '<div class="stk-rest"'+(open?'':' inert')+'><div class="stk-in">'+rest.map(function(p,i){return cardRow(p,enterId,maxA,i+1)}).join('')+'</div></div>'+
+      '<button type="button" class="stk-more" aria-expanded="'+(open?'true':'false')+'"><span>'+esc(open?'Ver menos':lab)+'</span>'+CHEVI+'</button></div>';
+  }
+  function stkToggle(box){
+    var open=!box.classList.contains('open'),pill=box.querySelector('.stk-more');
+    STK[box.dataset.k]=open;box.classList.toggle('open',open);box.querySelector('.stk-rest').inert=!open;
+    pill.setAttribute('aria-expanded',open?'true':'false');pill.firstChild.textContent=open?'Ver menos':box.dataset.lab;
+    if(open)setTimeout(function(){pill.scrollIntoView({block:'nearest',behavior:REDUCED.matches?'auto':'smooth'})},420);
+  }
+  $('pays').addEventListener('click',function(e){var b=e.target.closest('.stk-more');if(b)stkToggle(b.closest('.stk'))});
   function cardRow(p,enterId,maxA,n){
     var soon=p.diff<=3&&!p.paid,over=p.diff<0&&!p.paid,when=nxtLabel(p.diff),mon=monShort(p.date).toUpperCase();
     var lp=lastPaidAt(p),pct=p.total>0?Math.round(Math.min(1,(p.done||0)/p.total)*100):0;
@@ -2073,7 +2128,7 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     var weeks=Math.ceil((dow+HOR+1)/7),by={};list.forEach(function(p){(by[iso(p.date)]=by[iso(p.date)]||[]).push(p)});
     var cs0=CALSEL?CALSEL.split('-'):null,csPast=cs0&&new Date(+cs0[0],+cs0[1]-1,+cs0[2])<t;
     if(!CALSEL||csPast||(!by[CALSEL]&&CALSEL!==iso(t))){var first=list.filter(function(p){return !p.paid&&p.diff>=0})[0];CALSEL=iso(first?first.date:t)}
-    var late=list.filter(function(p){return !p.paid&&p.diff<0}),h2=late.length?'<h3 class="pgrp">Atrasados</h3>'+late.map(function(p,i4){return cardRow(p,enterId,maxA,i4)}).join(''):'';
+    var late=list.filter(function(p){return !p.paid&&p.diff<0}),h2=late.length?'<h3 class="pgrp">Atrasados</h3>'+stackHtml(late,enterId,maxA,'late'):'';
     var grid='<div class="ccal"><div class="cwk" aria-hidden="true">'+'LMMJVSD'.split('').map(function(c){return '<span>'+c+'</span>'}).join('')+'</div><div class="cgrid" role="group" aria-label="Calendario de pagos">';
     for(var i2=0;i2<weeks*7;i2++){
       var d=new Date(st);d.setDate(st.getDate()+i2);var k=iso(d),its=by[k]||[],diff=Math.round((d-t)/864e5),past=diff<0,out=diff>HOR;
@@ -2086,12 +2141,12 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
   function selHtml(list,enterId,maxA){
     var sd=CALSEL.split('-'),sdt=new Date(+sd[0],+sd[1]-1,+sd[2]),sel=list.filter(function(p){return iso(p.date)===CALSEL&&!(p.diff<0&&!p.paid)});
     return '<p class="csel">'+sdt.toLocaleDateString('es',{weekday:'long',day:'numeric',month:'long'}).replace(/^./,function(c){return c.toUpperCase()})+'</p>'+
-      (sel.length?sel.map(function(p,i3){return cardRow(p,enterId,maxA,i3)}).join(''):'<p class="note" style="margin:8px 2px 0">Nada vence este día.</p>');
+      (sel.length?stackHtml(sel,enterId,maxA,'day'):'<p class="note" style="margin:8px 2px 0">Nada vence este día.</p>');
   }
   $('pays').addEventListener('click',function(e){
     var b=e.target.closest('.cday'),box=$('daysel');if(!b)return;
     if(!box||b.dataset.d===CALSEL)return;
-    CALSEL=b.dataset.d;
+    CALSEL=b.dataset.d;STK.day=false;
     $('pays').querySelectorAll('.cday.sel').forEach(function(c){c.classList.remove('sel');c.setAttribute('aria-pressed','false')});
     b.classList.add('sel');b.setAttribute('aria-pressed','true');
     var list=payList(),maxA=Math.max.apply(null,list.filter(function(p){return !p.v}).map(function(p){return p.a}).concat([1]));
@@ -2128,6 +2183,10 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     $('runway').innerHTML=h;
     $('payAfter').hidden=true;
     $('pays').innerHTML=viewHtml(list,enterId,maxA);
+    if(PROMO){
+      var pk=PROMO;PROMO=null;var nf=$('pays').querySelector('.stk[data-k="'+pk+'"]>.prow:first-child')||(pk==='late'?$('pays').querySelector('.pgrp+.prow'):$('pays').querySelector('#daysel .prow'));
+      if(nf)nf.classList.add('promote');
+    }
   }
   function playRunway(){
     var r=$('runway'),h=$('payHero').firstChild,c=$('coverIn'),l=$('pays');
@@ -2152,6 +2211,7 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
   function gToast(txt,fn,sub,label){var t=$('gtoast'),gs=$('gsub');undoFn=fn||null;$('gundo').textContent=label||'Deshacer';$('gtxt').textContent=txt;gs.textContent=sub||'';gs.hidden=!sub;$('gundo').hidden=!fn;t.hidden=false;t.style.animation='none';void t.offsetWidth;t.style.animation='';clearTimeout(gT);gT=setTimeout(hideG,6500)}
   $('gundo').addEventListener('click',function(){var f=undoFn;if(!f)return;hideG();f()});
   function doPay(p,amount){
+    var r0=$('pays').querySelector('.prow[data-id="'+p.id+'"]');PROMO=(r0&&r0.matches('.stk:not(.open)>.prow:first-child'))?r0.parentNode.dataset.k:null;
     var occ=iso(payDate(p)),m={id:S.nid++,a:amount,c:p.c,t:Date.now(),pid:p.id,n:p.n},pid=p.id,mid=m.id;
     S.moves.unshift(m);S.paid[p.id]={d:occ,mid:m.id,t:Date.now()};save();
     renderPagos(p.id);renderMes();renderMetas();updateRep();
