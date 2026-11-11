@@ -504,6 +504,52 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
   *{animation-duration:.01ms !important;animation-delay:0s !important;transition-duration:.01ms !important}
   .coin{display:none}
 }
+
+/* ===== Metas: alcancía de vidrio con líquido ===== */
+#p3{overflow-x:hidden}
+.g1.hero{flex-direction:column;align-items:center;gap:0;margin-top:10px;text-align:center}
+.g1.hero .gcol{display:flex;flex-direction:column;align-items:center;margin-top:4px}
+.g1.hero .grow{justify-content:center}
+.g1.hero .pct{font-size:54px}
+.g1.hero .t{font-size:18px;margin-top:6px}
+.g1 .gpace{color:var(--act);font-weight:500;font-size:13px;margin-top:2px}
+.g1 .gpace:empty{display:none}
+.vwrap{width:210px;height:241px;margin:0 auto}
+.vlane{top:-60px;height:84px}
+.vwrap .vessel{overflow:visible}
+.gburst{top:128px;transform:scale(1.8)}
+.vessel .jback{fill:color-mix(in srgb,var(--ink) 6%,transparent)}
+.vessel .jedge{fill:none;stroke:var(--act);stroke-width:3;stroke-opacity:.85}
+.vessel .jgloss{fill:none;stroke:#fff;stroke-width:5;stroke-linecap:round;stroke-opacity:.5}
+.vessel .slot2{fill:var(--act)}
+.liq{transition:none}
+.wv{animation:wvx 4.2s linear infinite}
+.wv.w2{animation-duration:6.8s;animation-direction:reverse}
+@keyframes wvx{from{transform:translateX(-100px)}to{transform:translateX(0)}}
+.amp{transform-origin:0 6px}
+.vwrap.splash .amp{animation:amp 1s cubic-bezier(.2,.8,.3,1)}
+@keyframes amp{0%{transform:scaleY(1)}22%{transform:scaleY(3.2)}55%{transform:scaleY(.6)}100%{transform:scaleY(1)}}
+.bub{fill:#fff;fill-opacity:.55;animation:bub 5s ease-in infinite;opacity:0}
+@keyframes bub{0%{transform:translateY(0);opacity:0}12%{opacity:.8}85%{opacity:.5}100%{transform:translateY(-130px);opacity:0}}
+.sheenwrap{pointer-events:none}
+.sheen{transform:skewX(-14deg);animation:sheen 7s ease-in-out infinite}
+@keyframes sheen{0%,62%{transform:translateX(0) skewX(-14deg)}100%{transform:translateX(330px) skewX(-14deg)}}
+.ripple{fill:none;stroke:#fff;stroke-width:2;opacity:0;transform-box:fill-box;transform-origin:center}
+.ripple.go{animation:ripple .9s ease-out}
+@keyframes ripple{0%{opacity:.9;transform:scale(.3)}100%{opacity:0;transform:scale(1.7)}}
+.tk{color:var(--ink2);opacity:.6;transition:opacity .4s,color .4s}
+.tk line{stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.tk text{fill:currentColor;font-size:9px;font-weight:600}
+.tk .tkp{fill:none;stroke:var(--amberf);stroke-width:2;opacity:0}
+.tk.hit{opacity:1;color:var(--act)}
+.tk.flash line{animation:tkl 1s ease-out}
+.tk.flash .tkp{animation:tkp 1s ease-out}
+.tk.flash text{animation:tkt 1s ease-out}
+@keyframes tkp{0%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:scale(4)}}
+@keyframes tkl{0%{stroke:var(--amberf);stroke-width:4}100%{stroke-width:2}}
+@keyframes tkt{0%{fill:var(--amberf);font-size:13px}100%{font-size:9px}}
+.g2{margin-top:30px;padding-top:20px}
+@media (prefers-reduced-motion:reduce){.wv,.bub,.sheen{animation:none!important}}
 </style>
 </head>
 <body>
@@ -1821,9 +1867,9 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     $('goals').innerHTML=
       '<div class="shelf" id="shelf"></div>'+
       '<div class="gempty" id="gEmpty" hidden><p class="note">Todavía no tienes metas.</p><button type="button" class="gadd" id="goalCreate"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Crear meta</button></div>'+
-      '<div class="g1" id="g1"><div class="vwrap" id="vwrap"><div class="vlane" aria-hidden="true"><div class="gcoin" id="gcoin">$</div></div><svg class="vessel" id="vessel" viewBox="0 0 120 120" width="132" height="132" role="img"><defs><clipPath id="vclip"><rect id="vrect" x="0" y="104" width="120" height="120"/></clipPath></defs><path class="track" d="'+BODY+'"/><path class="fill" d="'+BODY+'" clip-path="url(#vclip)"/><path class="edge" d="'+BODY+'"/><rect class="slot2" x="44" y="12" width="32" height="7" rx="3.5"/></svg>'+
+      '<div class="g1 hero" id="g1"><div class="vwrap" id="vwrap"><div class="vlane" aria-hidden="true"><div class="gcoin" id="gcoin">$</div></div><svg class="vessel" id="vessel" viewBox="0 0 200 230" width="210" height="241" role="img" aria-label="Alcancía"><defs><clipPath id="jclip"><path d="M46 76C46 48 70 36 100 36C130 36 154 48 154 76V158C154 196 132 214 100 214C68 214 46 196 46 158Z"/></clipPath><clipPath id="bclip"><rect x="0" y="10" width="200" height="300"/></clipPath><linearGradient id="jliq" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--act);stop-opacity:.95"/><stop offset="1" style="stop-color:var(--act);stop-opacity:.62"/></linearGradient><linearGradient id="jsheen" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".5"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><path class="jback" d="M46 76C46 48 70 36 100 36C130 36 154 48 154 76V158C154 196 132 214 100 214C68 214 46 196 46 158Z"/><g clip-path="url(#jclip)"><g id="liq" class="liq" style="transform:translateY(214px)"><g class="wv w2"><g class="amp"><path d="M0 6Q25 15 50 6T100 6T150 6T200 6T250 6T300 6T350 6T400 6V260H0Z" fill="url(#jliq)" opacity=".42"/></g></g><g class="wv w1"><g class="amp"><path d="M0 6Q25 -3 50 6T100 6T150 6T200 6T250 6T300 6T350 6T400 6V260H0Z" fill="url(#jliq)"/></g></g><g class="bubs" clip-path="url(#bclip)"><circle cx="70" cy="150" r="2.6" class="bub" style="animation-duration:5.2s;animation-delay:0s"/><circle cx="92" cy="150" r="1.8" class="bub" style="animation-duration:4.1s;animation-delay:1.3s"/><circle cx="114" cy="150" r="3" class="bub" style="animation-duration:6.1s;animation-delay:0.6s"/><circle cx="132" cy="150" r="2" class="bub" style="animation-duration:4.8s;animation-delay:2.4s"/><circle cx="82" cy="150" r="1.6" class="bub" style="animation-duration:3.9s;animation-delay:3.1s"/><circle cx="122" cy="150" r="2.4" class="bub" style="animation-duration:5.6s;animation-delay:1.9s"/></g></g><ellipse class="ripple" id="ripple" cx="100" cy="214" rx="26" ry="5"/><g class="sheenwrap"><rect class="sheen" x="-50" y="30" width="34" height="200" fill="url(#jsheen)"/></g></g><path class="jedge" d="M46 76C46 48 70 36 100 36C130 36 154 48 154 76V158C154 196 132 214 100 214C68 214 46 196 46 158Z"/><path class="jgloss" d="M60 84C57 116 57 142 61 168"/><rect class="slot2" x="72" y="22" width="56" height="9" rx="4.5"/><g class="tk" data-p="25" style="transform:translate(158px,169.5px)"><circle class="tkp" cx="0" cy="0" r="5"/><line x1="0" y1="0" x2="12" y2="0"/><text x="16" y="3.5">25%</text></g><g class="tk" data-p="50" style="transform:translate(158px,125.0px)"><circle class="tkp" cx="0" cy="0" r="5"/><line x1="0" y1="0" x2="12" y2="0"/><text x="16" y="3.5">50%</text></g><g class="tk" data-p="75" style="transform:translate(158px,80.5px)"><circle class="tkp" cx="0" cy="0" r="5"/><line x1="0" y1="0" x2="12" y2="0"/><text x="16" y="3.5">75%</text></g></svg>'+
       '<div class="gburst" aria-hidden="true">'+BURST.map(function(b){return '<i class="gb" style="--x:'+b[0]+'px;--y:'+b[1]+'px"></i>'}).join('')+'</div></div>'+
-      '<div class="gcol" id="gcol"><div class="pct" id="gPct">0%</div><div class="t" id="gName"></div><span class="sub" id="gSub1"></span><span class="sub" id="gSub2"></span>'+
+      '<div class="gcol" id="gcol"><div class="pct" id="gPct">0%</div><div class="t" id="gName"></div><span class="sub" id="gSub1"></span><span class="sub" id="gSub2"></span><span class="sub gpace" id="gPace"></span>'+
       '<div class="grow"><button type="button" class="gadd" id="goalAdd"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Aportar</button>'+
       '<button type="button" class="gadd ghost" id="goalNew" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Nueva meta</button>'+
       '<button type="button" class="gadd icon" id="goalHist" aria-label="Ver aportes y opciones de la meta"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg></button></div></div></div>'+
@@ -1852,10 +1898,27 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     if(S.goals.length&&S.goals.length<MAXG)h+='<button type="button" class="gchip add" aria-label="Nueva meta"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>';
     $('shelf').innerHTML=h;$('shelf').hidden=!S.goals.length;
   }
+  var gLast=0,gFlash=false,PILEX=[74,92,110,128];
+  function ytop(p){return 214-178*p}
+  function flashTick(el){el.classList.remove('flash');void el.getBoundingClientRect();el.classList.add('flash');setTimeout(function(){el.classList.remove('flash')},1100)}
   function paintGoal(pct){
-    $('vrect').setAttribute('y',String(levelY(pct)));
+    $('liq').style.transform='translateY('+ytop(pct)+'px)';
     $('gPct').textContent=Math.round(pct*100)+'%';
     $('vessel').setAttribute('aria-label','Alcancía llena al '+Math.round(pct*100)+' por ciento');
+    $('vessel').querySelectorAll('.tk').forEach(function(t){
+      var p=+t.dataset.p/100,hit=pct>=p-1e-9;
+      if(hit!==t.classList.contains('hit')){t.classList.toggle('hit',hit);if(hit&&gFlash&&gLast<p)flashTick(t)}
+    });
+    gLast=pct;
+  }
+  function paceText(g){
+    var now=Date.now(),rest=cents(g.target-g.saved);if(rest<=0)return '';
+    var cs=(g.hist||[]).filter(function(x){return !x.init&&!x.ex&&x.t>=now-90*864e5});
+    if(cs.length<2)return '';
+    var sum=cs.reduce(function(t,x){return t+x.a},0),first=cs.reduce(function(m,x){return Math.min(m,x.t)},now),span=Math.max(30,(now-first)/864e5),per=sum/span;
+    if(!(per>0))return '';
+    var d=rest/per,txt=d<10?'unos días':d<45?'unas '+Math.max(2,Math.round(d/7))+' semanas':'unos '+Math.max(2,Math.round(d/30))+' meses';
+    return S.hide?'':'A tu ritmo: '+txt;
   }
   function paintTexts(g){
     var rest=cents(Math.max(0,g.target-g.saved)),done=rest<=0;
@@ -1863,6 +1926,7 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     $('gSub1').textContent=money(g.saved)+' de '+money(g.target);
     $('gSub2').textContent=done?(S.goals.length>=MAXG?'Meta cumplida · borra una meta para crear otra':'Meta cumplida'):'Faltan '+money(rest);
     $('goalAdd').hidden=done;$('goalNew').hidden=!done||S.goals.length>=MAXG;
+    $('gPace').textContent=paceText(g);
   }
   function renderMetas(){
     if(!goalBuilt)buildMetas();
@@ -1879,12 +1943,12 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     sub.textContent=over>0?'Pasaste el tope por '+money(over)+' · el mes sigue':'Te quedan '+money(cap-ocio)+' este mes';
   }
   function animateGoal(to,ms,after){
-    cancelAnimationFrame(gAnim);var from=gShown;
+    cancelAnimationFrame(gAnim);var from=gShown;gLast=from;
     if(REDUCED.matches||from===to){gAnim=0;gShown=to;renderMetas();if(after)after();return}
-    var t0=performance.now();
+    var t0=performance.now();gFlash=true;
     (function step(t){
       var p=Math.min(1,(t-t0)/ms),e=1-Math.pow(1-p,4),v=from+(to-from)*e;gShown=v;paintGoal(v);
-      if(p<1)gAnim=requestAnimationFrame(step);else{gAnim=0;gShown=to;renderMetas();if(after)after()}
+      if(p<1)gAnim=requestAnimationFrame(step);else{gAnim=0;gFlash=false;gShown=to;renderMetas();if(after)after()}
     })(t0);
   }
   /* show a goal right now: texts swap with a small fade, the pot slides to its level */
@@ -1894,14 +1958,21 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     var c=$('gcol');c.classList.remove('swap');void c.offsetWidth;c.classList.add('swap');
     animateGoal(gpct(g),ms||700);
   }
+  window.replayGoal=function(){
+    var g=G();if(!g||gAnim||gHold||REDUCED.matches)return;
+    renderShelf();gShown=0;paintGoal(0);gFlash=true;animateGoal(gpct(g),1300);
+  };
   function selectGoal(id){
     var cur=G();if(!id||(cur&&cur.id===id))return;
     S.goalSel=id;save();switchTo(G());
   }
   function dropGoalCoin(cb){
     if(REDUCED.matches){cb();return 0}
-    var c=$('gcoin'),w=$('vwrap');c.classList.remove('go');void c.offsetWidth;c.classList.add('go');
+    var c=$('gcoin'),w=$('vwrap'),rp=$('ripple'),sy=ytop(gShown);
+    c.classList.remove('go');void c.offsetWidth;c.classList.add('go');
     setTimeout(function(){w.classList.remove('bump');void w.offsetWidth;w.classList.add('bump')},470);
+    rp.setAttribute('cy',sy);rp.classList.remove('go');
+    setTimeout(function(){w.classList.remove('splash');void w.offsetWidth;w.classList.add('splash');rp.classList.add('go')},560);
     return setTimeout(cb,520);
   }
   function celebrate(){
@@ -2125,6 +2196,7 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     ['p0','p1','p2','p3'].forEach(function(id,j){if(j===i)$(id).removeAttribute('inert');else $(id).setAttribute('inert','')});
     paintBar(i);
     if(i===2)playRunway();
+    if(i===3&&window.replayGoal)window.replayGoal();
     if(i===1&&!(window.instRemind&&window.instRemind())&&window.bkRemind)window.bkRemind();
     if(i!==1&&!isCurView()){var nw=new Date();viewY=nw.getFullYear();viewM=nw.getMonth();mesBuilt=false;closePop(true);renderMes()}
   }
