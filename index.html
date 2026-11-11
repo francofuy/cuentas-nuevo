@@ -1534,11 +1534,12 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
   }
   $('pays').addEventListener('pointerdown',function(e){
     var f=e.target.closest('.pfront');if(!f||e.target.closest('.alarm,.paidbtn')||f.classList.contains('paid'))return;
+    if(e.pointerType==='touch')return;
     if(e.pointerType==='mouse'&&e.button!==0)return;
     sw={f:f,sw:f.parentNode,x:e.clientX,y:e.clientY,id:e.pointerId,drag:false,dx:0,w:f.offsetWidth};
   });
   $('pays').addEventListener('pointermove',function(e){
-    if(!sw||e.pointerId!==sw.id)return;
+    if(e.pointerType==='touch'||!sw||e.pointerId!==sw.id)return;
     var dx=e.clientX-sw.x,dy=e.clientY-sw.y;
     if(!sw.drag){
       if(Math.abs(dy)>12&&Math.abs(dy)>Math.abs(dx)){sw=null;return}
@@ -1549,10 +1550,38 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     sw.dx=dx;sw.f.style.transform='translateX('+x+'px)';sw.sw.classList.toggle('armed',dx>thr);
   });
   ['pointerup','pointercancel'].forEach(function(ev){$('pays').addEventListener(ev,function(e){
-    if(!sw||e.pointerId!==sw.id)return;var s=sw;sw=null;if(!s.drag)return;
+    if(e.pointerType==='touch'||!sw||e.pointerId!==sw.id)return;var s=sw;sw=null;if(!s.drag)return;
     lastDragAt=Date.now();
     if(ev==='pointerup'&&s.dx>s.w*0.38)commitPay(s);else springBack(s);
   })});
+  /* touch (iPhone): the same swipe, driven by touch events so the browser cannot take the gesture away halfway */
+  var tsw=null;
+  function deckLock(on){$('deck').style.overflowX=on?'hidden':''}
+  $('pays').addEventListener('touchstart',function(e){
+    tsw=null;deckLock(false);
+    if(e.touches.length!==1)return;
+    var t=e.touches[0],f=e.target.closest('.pfront');
+    if(!f||e.target.closest('.alarm,.paidbtn')||f.classList.contains('paid'))return;
+    tsw={f:f,sw:f.parentNode,x:t.clientX,y:t.clientY,drag:false,dx:0,w:f.offsetWidth};
+    deckLock(true);
+  },{passive:true});
+  $('pays').addEventListener('touchmove',function(e){
+    if(!tsw)return;var t=e.touches[0],dx=t.clientX-tsw.x,dy=t.clientY-tsw.y;
+    if(!tsw.drag){
+      if(Math.abs(dy)>10&&Math.abs(dy)>Math.abs(dx)){tsw=null;deckLock(false);return}
+      if(dx>8&&dx>Math.abs(dy)*1.2){tsw.drag=true;tsw.sw.classList.add('drag');tsw.f.classList.remove('spring')}
+      else return;
+    }
+    if(e.cancelable)e.preventDefault();
+    var thr=tsw.w*0.38,x=dx<0?0:(dx<=thr?dx:thr+(dx-thr)*0.35);
+    tsw.dx=dx;tsw.f.style.transform='translateX('+x+'px)';tsw.sw.classList.toggle('armed',dx>thr);
+  },{passive:false});
+  ['touchend','touchcancel'].forEach(function(ev){$('pays').addEventListener(ev,function(e){
+    var s=tsw;tsw=null;setTimeout(function(){deckLock(false)},0);
+    if(!s||!s.drag)return;
+    lastDragAt=Date.now();if(e.cancelable)e.preventDefault();
+    if(s.dx>s.w*0.38)commitPay(s);else springBack(s);
+  },{passive:false})});
   $('pays').addEventListener('click',function(e){
     var pb=e.target.closest('.paidbtn');
     if(pb){
