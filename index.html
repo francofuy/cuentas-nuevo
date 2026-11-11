@@ -440,16 +440,10 @@ button.cmp:active .cmgo{transform:translateX(3px)}
 .gadd:not([hidden]){animation:rowIn .4s cubic-bezier(.16,1,.3,1) backwards}
 .pct{font-size:44px;font-weight:600;letter-spacing:-0.03em;line-height:1}
 .g1 .t{font-size:17px;font-weight:500;margin-top:8px}
-.g2{margin-top:44px;padding-top:24px;border-top:1px solid var(--line)}
-.line{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:17px}
-.line b{font-weight:500}
-.gauge{position:relative;height:20px;border-radius:10px;background:var(--line);margin-top:14px;overflow:hidden}
-.gauge i{display:block;height:100%;border-radius:10px;background:var(--c4);transition:width .6s cubic-bezier(.16,1,.3,1)}
 .capbtn{font:inherit;color:inherit;padding:0;min-height:0;border-radius:4px;text-decoration:underline dotted;text-decoration-thickness:1.5px;text-underline-offset:4px;text-decoration-color:color-mix(in srgb,currentColor 55%,transparent);cursor:pointer}
 .capbtn{display:inline-block;position:relative}
 .capbtn::after{content:"";position:absolute;inset:-12px -6px}
 .capbtn:focus-visible{outline:2px solid var(--ring);outline-offset:3px}
-.gl{display:flex;justify-content:space-between;font-size:13px;color:var(--ink2);margin-top:6px}
 .over{color:var(--amber);font-weight:600}
 
 /* Compact floating pickers: small glass windows that open next to the button you tapped */
@@ -548,7 +542,6 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
 @keyframes tkp{0%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:scale(4)}}
 @keyframes tkl{0%{stroke:var(--amberf);stroke-width:4}100%{stroke-width:2}}
 @keyframes tkt{0%{fill:var(--amberf);font-size:13px}100%{font-size:9px}}
-.g2{margin-top:30px;padding-top:20px}
 @media (prefers-reduced-motion:reduce){.wv,.bub,.sheen{animation:none!important}}
 </style>
 </head>
@@ -750,7 +743,7 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
 (function(){
   var CATS=['Comida','Transporte','Casa','Ocio','Salud'], ACCTS=['Efectivo','Tarjeta','Banco'];
   var CATCOL={Comida:'--c1',Transporte:'--c2',Casa:'--c3',Ocio:'--c4',Salud:'--c5'};
-  var OCIO_CAP=1000, KEY='alcancia.v1';
+  var KEY='alcancia.v1';
   var CHECK='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
   var BELL='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6M10 19a2 2 0 0 0 4 0"/></svg>';
   var $=function(id){return document.getElementById(id)};
@@ -777,7 +770,7 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     if(!o.pd||typeof o.pd!=='object')delete o.pd;
     var mx=0;o.moves.concat(o.inc||[]).forEach(function(x){if(num(x.id)&&x.id>mx)mx=x.id});
     if(!num(o.nid)||o.nid<=mx)o.nid=Math.max(200,mx+1);
-    if(!(o.ocioCap>0))delete o.ocioCap;
+    delete o.ocioCap;
     return o;
   }
   var S0=clean(load()),S=S0||{moves:[],inc:[],hide:false,cat:'Comida',acct:'Tarjeta',alarms:{},nid:1};
@@ -986,25 +979,16 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
     else{v=parseFloat(amt);cat=S.cat;acct=S.acct}
     if(!(v>0))return;
     if(txt){S.cat=cat;S.acct=acct}
-    var oBefore=cat==='Ocio'?ocioTotal():0;
     var m={id:S.nid++,a:v,c:cat,k:acct,t:tsAgo(dAgo)};S.moves.unshift(m);last=m;save();
-    var notice=cat==='Ocio'?ocioNotice(oBefore,ocioTotal()):'';
     acctTouched=false;dateAgo=0;
     var coin=$('coin'),slot=$('slot');
     coin.textContent='$';coin.classList.remove('go');slot.classList.remove('flash');void coin.offsetWidth;coin.classList.add('go');slot.classList.add('flash');
     amt='';
     if(txt)setTimeout(function(){phrase.value='';exitTxt(false)},420);else setTimeout(showAmt,420);
     var prevMonth=new Date(m.t).getMonth()!==new Date().getMonth();
-    toast('Guardado en '+m.c+' · '+(S.hide?'••••':'$'+v.toLocaleString('en-US'))+(dAgo>0?' · '+dateLabel(dAgo).toLowerCase()+(prevMonth?' (mes anterior)':''):''),notice);
+    toast('Guardado en '+m.c+' · '+(S.hide?'••••':'$'+v.toLocaleString('en-US'))+(dAgo>0?' · '+dateLabel(dAgo).toLowerCase()+(prevMonth?' (mes anterior)':''):''));
     renderAll();
   });
-  /* gentle heads-up when leisure spending reaches 80% and 100% of its limit (only at those two moments) */
-  function ocioTotal(){var n=new Date();return S.moves.filter(function(x){var d=new Date(x.t);return x.c==='Ocio'&&d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()}).reduce(function(t,x){return t+x.a},0)}
-  function ocioNotice(before,after){
-    if(before<OCIO_CAP&&after>=OCIO_CAP)return S.hide?'Llegaste a tu tope de ocio. Nada grave: el mes todavía tiene días.':'Llegaste a tu tope de ocio de '+money(OCIO_CAP)+'. Nada grave: el mes todavía tiene días.';
-    if(before<OCIO_CAP*0.8&&after>=OCIO_CAP*0.8)return S.hide?'Ya casi llegas al tope de ocio de este mes.':'Llevas '+money(after)+' de tus '+money(OCIO_CAP)+' de ocio este mes.';
-    return '';
-  }
   function toast(txt,sub){var t=$('toast'),sb=$('toastSub');$('toastTxt').textContent=txt;sb.textContent=sub||'';sb.hidden=!sub;t.hidden=false;t.style.animation='none';void t.offsetWidth;t.style.animation='';clearTimeout(toastT);toastT=setTimeout(function(){t.hidden=true},6500)}
   $('undo').addEventListener('click',function(){
     if(!last)return;var lid=last.id;if(last.inc)S.inc=S.inc.filter(function(m){return m.id!==lid});else S.moves=S.moves.filter(function(m){return m.id!==lid});last=null;save();$('toast').hidden=true;renderAll();
@@ -1087,10 +1071,6 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
       }
       return;
     }
-    if(b.dataset.cap!=='ocio')return;
-    openPicker(b,{mode:'input',num:true,title:'Tope de ocio al mes',placeholder:'Por ejemplo, 1000',value:String(OCIO_CAP),onPick:function(v){
-      OCIO_CAP=+v;S.ocioCap=+v;save();renderMes();renderMetas();
-    }});
   });
   $('pkVeil').addEventListener('pointerdown',function(e){e.preventDefault();pkClose()});
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&pkOpen){e.preventDefault();e.stopImmediatePropagation();pkClose()}});
@@ -1601,11 +1581,10 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
   function gToast(txt,fn,sub,label){var t=$('gtoast'),gs=$('gsub');undoFn=fn||null;$('gundo').textContent=label||'Deshacer';$('gtxt').textContent=txt;gs.textContent=sub||'';gs.hidden=!sub;$('gundo').hidden=!fn;t.hidden=false;t.style.animation='none';void t.offsetWidth;t.style.animation='';clearTimeout(gT);gT=setTimeout(hideG,6500)}
   $('gundo').addEventListener('click',function(){var f=undoFn;if(!f)return;hideG();f()});
   function doPay(p,amount){
-    var oBefore=p.c==='Ocio'?ocioTotal():0;
     var occ=iso(payDate(p)),m={id:S.nid++,a:amount,c:p.c,k:p.k,t:Date.now(),pid:p.id},pid=p.id,mid=m.id;
     S.moves.unshift(m);S.paid[p.id]={d:occ,mid:m.id,t:Date.now()};save();
     renderPagos(p.id);renderMes();renderMetas();updateRep();
-    var pNotice=(p.c==='Ocio'?ocioNotice(oBefore,ocioTotal()):'')||balSub();
+    var pNotice=balSub();
     gToast(p.n+' pagado · '+money(amount),function(){
       S.moves=S.moves.filter(function(x){return x.id!==mid});delete S.paid[pid];save();
       renderPagos(pid);renderMes();renderMetas();updateRep();
@@ -1872,11 +1851,7 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
       '<div class="gcol" id="gcol"><div class="pct" id="gPct">0%</div><div class="t" id="gName"></div><span class="sub" id="gSub1"></span><span class="sub" id="gSub2"></span><span class="sub gpace" id="gPace"></span>'+
       '<div class="grow"><button type="button" class="gadd" id="goalAdd"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Aportar</button>'+
       '<button type="button" class="gadd ghost" id="goalNew" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Nueva meta</button>'+
-      '<button type="button" class="gadd icon" id="goalHist" aria-label="Ver aportes y opciones de la meta"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg></button></div></div></div>'+
-      '<div class="g2"><div class="line"><b>Gastar menos en ocio</b><span id="oSp"></span></div>'+
-      '<div class="gauge" role="img" aria-label="Ocio este mes frente al tope"><i id="oBar" style="width:0%"></i></div>'+
-      '<div class="gl"><span id="oL"></span><span id="oR"></span></div>'+
-      '<span class="sub" id="oSub" style="margin-top:10px"></span></div>';
+      '<button type="button" class="gadd icon" id="goalHist" aria-label="Ver aportes y opciones de la meta"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg></button></div></div></div>';
     goalBuilt=true;var g=G();gShown=g?gpct(g):0;
     $('goalAdd').addEventListener('click',openGoalMod);
     $('goalNew').addEventListener('click',function(){openNG(this)});
@@ -1936,11 +1911,6 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
       if(!gAnim&&!gHold){gShown=gpct(g);paintGoal(gShown);paintTexts(g)}
       else $('gName').textContent=g.name;
     }
-    var ocio=monthMoves().filter(function(x){return x.c==='Ocio'}).reduce(function(t,x){return t+x.a},0),cap=OCIO_CAP,over=ocio-cap;
-    $('oSp').textContent=money(ocio);$('oBar').style.width=Math.min(100,ocio/cap*100)+'%';
-    $('oL').textContent=money(0);$('oR').innerHTML='<button type="button" class="capbtn" data-cap="ocio" aria-label="Cambiar tope de ocio">Tope '+money(cap)+'</button>';
-    var sub=$('oSub');sub.className='sub'+(over>0?' over':'');
-    sub.textContent=over>0?'Pasaste el tope por '+money(over)+' · el mes sigue':'Te quedan '+money(cap-ocio)+' este mes';
   }
   function animateGoal(to,ms,after){
     cancelAnimationFrame(gAnim);var from=gShown;gLast=from;

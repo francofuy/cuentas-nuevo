@@ -10,7 +10,7 @@ App personal de dinero para iPhone. Una sola página (HTML/CSS/JS sin dependenci
 1. **Captura** (cobalto): ranura + teclado + categoría/cuenta. Tocar el «$» cambia a «+» para sumar plata.
 2. **Mes**: saldo general, banda por categoría con marca de ritmo, leyenda filtrable, calendario día por día con popover.
 3. **Pagos**: línea de 30 días con marcadores, lista compacta, deslizar para pagar.
-4. **Metas**: alcancías con aportes, tope de ocio.
+4. **Metas**: alcancía de vidrio con líquido, aportes, marcas de avance y ritmo estimado.
 
 ## Modelo del dinero
 Saldo = entradas − gastos − pagos hechos − aportes a metas. Se arrastra de mes en mes. Los pagos hechos se registran como gastos; los aportes a metas salen del saldo sin sumarse a las barras. El sueldo fijo se suma solo cada mes.
@@ -26,7 +26,7 @@ Saldo = entradas − gastos − pagos hechos − aportes a metas. Se arrastra de
 - Ranura (`.slot`) con moneda que cae; teclado numérico propio.
 - Selectores compactos de cristal (`.pk`): lista, cuadrícula de días o un campo numérico/texto.
 - Mini modales (`.addmod`): pago, aporte, meta, detalle; variante ciruela para Metas.
-- Cifras editables con subrayado punteado (`.capbtn`): tope de ocio, nombre y objetivo de meta, entradas del mes.
+- Cifras editables con subrayado punteado (`.capbtn`): nombre y objetivo de meta, entradas del mes.
 - Avisos con una acción (`.toast`, `.gtoast`): deshacer, guardar respaldo.
 
 ## Principios
