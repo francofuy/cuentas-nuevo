@@ -11,4 +11,4 @@ App personal de dinero para el iPhone: gastos rápidos, saldo del mes, pagos que
 
 El diseño está explicado en [DESIGN.md](DESIGN.md).
 
-_Ultima publicacion: 2026-11-14 (montos con centavos, entradas del mes con desplazamiento)._
+_Ultima publicacion: 2026-11-14 (centavos mas pequenos en los montos)._

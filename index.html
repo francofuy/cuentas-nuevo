@@ -490,6 +490,7 @@ button.cmp:active .cmgo{transform:translateX(3px)}
 .pk-o{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:40px;padding:0 12px;border-radius:12px;font-size:16px;text-align:left;animation:rowIn .35s cubic-bezier(.16,1,.3,1) backwards;animation-delay:calc(min(var(--i),10)*30ms + 60ms)}
 .pk-o:active{background:var(--line)}
 .pk-list.two>.pk-o{min-width:0}
+.cts{font-size:max(.62em,10.5px);font-weight:inherit;letter-spacing:0}
 .pk-o.other{grid-column:1/-1;color:var(--act);font-weight:600}
 .pk-o[aria-checked="true"]{font-weight:600}
 .pk-o svg{color:var(--act);flex:none}
@@ -1073,6 +1074,29 @@ dialog[open]{animation:rise2 .3s cubic-bezier(.16,1,.3,1)}
   /* montos: se muestran los centavos solo cuando los hay ($8,520 o $8,520.35); nunca se redondea un dato con decimales */
   function fmtN(n){n=Math.round((+n||0)*100)/100;return n%1?n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):Math.round(n).toLocaleString('en-US')}
   function money(n){return S.hide?'••••':'$'+fmtN(n)}
+  /* los centavos (con su punto) se ven más pequeños que el resto de la cifra: $8,520<small>.35</small> */
+  (function(){
+    var RE_D=/(\$\d[\d,]*)(\.\d{2})(?!\d)/g,RE_T=/^(\d[\d,]*)(\.\d{0,2})$/,busy=false;
+    function wrap(n){
+      var par=n.parentNode;if(!par||par.nodeType!==1||par.classList.contains('cts')||/^(SCRIPT|STYLE|TEXTAREA|INPUT|OPTION)$/.test(par.tagName))return;
+      var t=n.nodeValue,f=document.createDocumentFragment(),i=0,m,any=false;
+      if(par.hasAttribute('data-cts')){m=RE_T.exec(t.trim());if(m&&m[2]){f.appendChild(document.createTextNode(m[1]));var sp=document.createElement('span');sp.className='cts';sp.textContent=m[2];f.appendChild(sp);par.replaceChild(f,n)}return}
+      RE_D.lastIndex=0;
+      while((m=RE_D.exec(t))){any=true;f.appendChild(document.createTextNode(t.slice(i,m.index+m[1].length)));var s2=document.createElement('span');s2.className='cts';s2.textContent=m[2];f.appendChild(s2);i=m.index+m[0].length}
+      if(!any)return;f.appendChild(document.createTextNode(t.slice(i)));par.replaceChild(f,n);
+    }
+    function scan(root){
+      if(root.nodeType===3){wrap(root);return}
+      if(root.nodeType!==1||root.classList&&root.classList.contains('cts'))return;
+      var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),a=[],n;while((n=w.nextNode()))a.push(n);a.forEach(wrap);
+    }
+    ['amt','pmAmt','a2Amt','gmAmt','ngAmt'].forEach(function(id){var e=document.getElementById(id);if(e)e.setAttribute('data-cts','1')});
+    scan(document.body);
+    new MutationObserver(function(rs){
+      if(busy)return;busy=true;
+      try{rs.forEach(function(r){if(r.type==='characterData')scan(r.target);else r.addedNodes.forEach(scan)})}finally{busy=false}
+    }).observe(document.body,{childList:true,subtree:true,characterData:true});
+  })();
   function dayLabel(t){var d=Math.round((new Date().setHours(0,0,0,0)-new Date(t).setHours(0,0,0,0))/864e5);return d<=0?'hoy':d===1?'ayer':'hace '+d+' días'}
 
   /* capture */
